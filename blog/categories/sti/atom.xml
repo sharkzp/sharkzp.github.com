@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: STI | Root of Evil]]></title>
+  <link href="http://sharkzp.github.io/blog/categories/sti/atom.xml" rel="self"/>
+  <link href="http://sharkzp.github.io/"/>
+  <updated>2013-04-20T12:48:09+03:00</updated>
+  <id>http://sharkzp.github.io/</id>
+  <author>
+    <name><![CDATA[Alex Topalov]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Don't use STI in your Rails Apps]]></title>
+    <link href="http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps/"/>
+    <updated>2013-04-20T11:33:00+03:00</updated>
+    <id>http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps</id>
+    <content type="html"><![CDATA[<p><blockquote><p></p></p><p><p>Single table inheritance is a way to emulate object-oriented inheritance in a<br/>relational database. When mapping from a database table to an object in an<br/>object-oriented language, a field in the database identifies what class in the hierarchy the object belongs to</p></p><p><p></p><footer><strong>Sincerely Your Wiki</strong> <cite><a href='http://en.wikipedia.org/wiki/Single_Table_Inheritance'>en.wikipedia.org/wiki/&hellip;</a></cite></footer></blockquote></p>
+
+<p>Single Table Inheritance(STI) is a useful and sharp technique,
+and like any other high level instrument you should use it in an appropriate place.
+Let's take a closer look with examples</p>
+
+<!-- more -->
+
+
+<p>For example you have a Blog, inside this blog you will have for sure such objects:</p>
+
+<ul>
+<li>Image</li>
+<li>User Avatar</li>
+<li>Comments Attachments</li>
+</ul>
+
+
+<p>First thing that you should create is a table from which you will inherit:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1&gt;app/mo</span><span class="n">dels</span><span class="o">/</span><span class="n">asset</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Asset &amp;lt; ActiveRecord::Base</span>
+</span><span class='line'><span class="sr">  # Fields:&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="c1">#   String attachment</span>
+</span><span class='line'><span class="c1">#   String type</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1&gt;app/mo</span><span class="n">dels</span><span class="o">/</span><span class="n">image</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Image &amp;lt; Asset</span>
+</span><span class='line'><span class="sr">  mount_uploader :attachment, ImageUploader</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">app</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">avatar</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Avatar &amp;lt; Asset</span>
+</span><span class='line'><span class="sr">  mount_uploader :attachment, AvatarUploader</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">app</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">comment_attachment</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class CommentAttachment &amp;lt; Asset</span>
+</span><span class='line'><span class="sr">  mount_uploader :attachment, CommentAttachmentUploader</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>Let's what will happens in terminal:</h3>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">001</span> <span class="o">&gt;</span> <span class="n">asset</span> <span class="o">=</span> <span class="no">Asset</span><span class="o">.</span><span class="n">create</span>
+</span><span class='line'>  <span class="o">=&gt;</span> <span class="c1">#&lt;Asset id: 1, type: nil, attachment: nil&gt;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">004</span> <span class="o">&gt;</span> <span class="n">comment_attachment</span> <span class="o">=</span> <span class="no">CommentAttachment</span><span class="o">.</span><span class="n">create</span>
+</span><span class='line'>  <span class="o">=&gt;</span> <span class="c1">#&lt;CommentAttachment id: 4, type: &quot;CommentAttachment&quot;, attachment: nil&gt;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">006</span> <span class="o">&gt;</span> <span class="no">Asset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;id, type&#39;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">=&gt;</span> <span class="o">[</span><span class="c1">#&lt;Asset id: 1, type: nil&gt;, #&lt;Image id: 2, type: &quot;Image&quot;&gt;, #&lt;Avatar id: 3, type: &quot;Avatar&quot;&gt;, #&lt;CommentAttachment id: 4, type: &quot;CommentAttachment&quot;&gt;]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h3>How does it work?</h3>
+
+<p><blockquote><p>Active Record allows inheritance by storing the name of the class in a column that by default is named “type” (can be changed by overwriting Base.inheritance_column)</p><footer><strong>http://api.rubyonrails.org/classes/ActiveRecord/Base.html</strong></footer></blockquote></p>
+
+<p>So when you inherit from some table your child tables will insert class name in <code>type</code> column.
+This looks good, you create one table, make an abstraction and right now everything work nice.
+When you will specify each uploader you could create different behavior and image size(I will not cover it in this post feel free to visit <a href="https://github.com/jnicklas/carrierwave">This link</a>)
+You could go to your boss and say they your are awesome :)</p>
+
+<h2>Where is the evil?</h2>
+
+<p>What will happens when you will create a User?
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1&gt;app/mo</span><span class="n">dels</span><span class="o">/</span><span class="n">user</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class User &amp;lt; ActiveRecord::Base</span>
+</span><span class='line'><span class="sr">  has_one :avatar</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">app</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">avatar</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Avatar &amp;lt; Asset</span>
+</span><span class='line'><span class="sr">  belongs_to :user</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>You should add <code>user_id</code> to your asset table.
+Oh, yes you also need a <code>Post</code>, that will include <code>Images</code>, and yes you have a <code>Comments</code>, that attach to you <code>CommentAttachment</code>.
+And in the end you will face this kind of scheme:
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">create_table</span> <span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="ss">:force</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;t.string   &quot;type&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;attachment&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;user_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;post_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;comment_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;commentator_id&quot;</span>
+</span><span class='line'><span class="sr">t.datetime &quot;created_at&quot;, :null =&amp;gt; false</span>
+</span><span class='line'><span class="sr">t.datetime &quot;updated_at&quot;, :null =&amp;gt; false</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Half of your table will be filled with <code>NULL</code>.
+Maybe someday you will decide to use your <code>CommentAttachment</code> for attaching <code>Audio</code> and <code>video</code>?
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">create_table</span> <span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="ss">:force</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;t.string   &quot;type&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;attachment&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;user_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;post_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;comment_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;commentator_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;audio_bitrate&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;thumbnail&quot;</span>
+</span><span class='line'><span class="sr">t.boolean  &quot;is_in_gallery&quot; #for cases when you create a gallery of images</span>
+</span><span class='line'><span class="sr">t.string   &quot;artist&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;album&quot;</span>
+</span><span class='line'><span class="sr">t.integer  &quot;year&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;genre&quot;</span>
+</span><span class='line'><span class="sr">t.integer  &quot;bitrate&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">t.datetime &quot;created_at&quot;, :null =&amp;gt; false</span>
+</span><span class='line'><span class="sr">t.datetime &quot;updated_at&quot;, :null =&amp;gt; false</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Right now your table will looks like a crap. And your project will became soo huge that you could not to refactoring well.</p>
+
+<h2>Conclusion</h2>
+
+<p>Use STI only when you totally sure that you will never change it.
+This post based on a true story.</p>
+]]></content>
+  </entry>
+  
+</feed>
