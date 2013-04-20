@@ -4,7 +4,7 @@
   <title><![CDATA[Category: OOP | Root of Evil]]></title>
   <link href="http://sharkzp.github.io/blog/categories/oop/atom.xml" rel="self"/>
   <link href="http://sharkzp.github.io/"/>
-  <updated>2013-04-20T12:57:09+03:00</updated>
+  <updated>2013-04-20T17:27:54+03:00</updated>
   <id>http://sharkzp.github.io/</id>
   <author>
     <name><![CDATA[Alex Topalov]]></name>
@@ -100,7 +100,7 @@ Let's take a closer look with examples</p>
 </span><span class='line'><span class="sr">end</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3>Let's what will happens in terminal:</h3>
+<h3>Let's see what will happens in terminal:</h3>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
