@@ -49,7 +49,7 @@ class CommentAttachment < Asset
 end
 {% endcodeblock %}
 
-###Let's what will happens in terminal:
+###Let's see what will happens in terminal:
 {% codeblock lang:ruby%}
   1.9.3-p194 :001 > asset = Asset.create
   => #<Asset id: 1, type: nil, attachment: nil>
