@@ -4,7 +4,7 @@
   <title><![CDATA[Category: OOP | Root of Evil]]></title>
   <link href="http://sharkzp.github.io/blog/categories/oop/atom.xml" rel="self"/>
   <link href="http://sharkzp.github.io/"/>
-  <updated>2013-04-28T13:37:25+03:00</updated>
+  <updated>2013-06-17T00:04:38+03:00</updated>
   <id>http://sharkzp.github.io/</id>
   <author>
     <name><![CDATA[Alex Topalov]]></name>
@@ -12,6 +12,183 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[All about Duck Types]]></title>
+    <link href="http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types/"/>
+    <updated>2013-06-16T23:26:00+03:00</updated>
+    <id>http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types</id>
+    <content type="html"><![CDATA[<h3>Introduction</h3>
+
+<p>I heard a lot about Duck Types in Rails but I have never saw how can I used in a real-time application.
+Today I will show you how to use duck types in examples.</p>
+
+<p><blockquote><p>Duck Typing is a style of dynamic typing in which an object's methods and properties determine the valid semantics, rather than its inheritance from a particular class or implementation of a specific interface.</p></blockquote></p>
+
+<!-- more -->
+
+
+<p>This sounds a bit weird for me, lets make an example.
+For instance you have a class that responsible for generating some View-presenter data according to objects that you pass</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Presenter</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;def description(subject)</span>
+</span><span class='line'><span class="sr">  case subject</span>
+</span><span class='line'><span class="sr">  when User</span>
+</span><span class='line'><span class="sr">    subject.serializable_hash.merge!(type: &quot;MiMo User&quot;)</span>
+</span><span class='line'><span class="sr">  when Deposit</span>
+</span><span class='line'><span class="sr">    subject.as_json.merge!(type: &quot;Deposit&quot;, label: &#39;Some label&#39;)</span>
+</span><span class='line'><span class="sr">  when BankAccount</span>
+</span><span class='line'><span class="sr">    subject.as_json.merge!(type: &quot;Bank Account&quot;, label: &#39;label&#39;)</span>
+</span><span class='line'><span class="sr">  when Withdrawal</span>
+</span><span class='line'><span class="sr">    subject.counterparty_hash</span>
+</span><span class='line'><span class="sr">  when Event</span>
+</span><span class='line'><span class="sr">    subject.endpoint_attributes.merge!(type: &quot;Some type&quot;, label: &#39;Label to display&#39;)</span>
+</span><span class='line'><span class="sr">  when NilClass</span>
+</span><span class='line'><span class="sr">    nil</span>
+</span><span class='line'><span class="sr">  else</span>
+</span><span class='line'><span class="sr">    raise NotImplementedError</span>
+</span><span class='line'><span class="sr">  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2>What's wrong?</h2>
+
+<p>In some day you could came up to such solution. And on what you should take a look
+This violates SOLID principles.</p>
+
+<ol>
+<li>Why presenter class should know about view representation about each class?</li>
+<li>We did not make any modifications with data that came up from class, than why we cannot move this method to class itself?</li>
+</ol>
+
+
+<p>Let's refactoring this:
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Presenter</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;case subject</span>
+</span><span class='line'><span class="sr">when User</span>
+</span><span class='line'><span class="sr">  subject.description</span>
+</span><span class='line'><span class="sr">when Deposit</span>
+</span><span class='line'><span class="sr">  subject.description</span>
+</span><span class='line'><span class="sr">when BankAccount</span>
+</span><span class='line'><span class="sr">  subject.description</span>
+</span><span class='line'><span class="sr">when Withdrawal</span>
+</span><span class='line'><span class="sr">  subject.description</span>
+</span><span class='line'><span class="sr">when Event</span>
+</span><span class='line'><span class="sr">  subject.description</span>
+</span><span class='line'><span class="sr">when NilClass</span>
+</span><span class='line'><span class="sr">  nil</span>
+</span><span class='line'><span class="sr">else</span>
+</span><span class='line'><span class="sr">  raise NotImplementedError</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="no">For</span> <span class="n">other</span> <span class="n">classes</span> <span class="n">this</span> <span class="n">will</span> <span class="n">be</span> <span class="n">similar</span> <span class="n">to</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class User</span>
+</span><span class='line'><span class="sr">  def self.description&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">serializable_hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;MiMo User&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+If subject will not implement description than rails will raise an exception.
+Next iteration of refactoring
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Presenter</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;subject.description</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+Congratulation you successfully implement Duck type :)
+But now our presenter looks like <a href="http://sourcemaking.com/refactoring/lazy-class">lazy class</a>.
+So this class could be totally removed.</p>
+
+<h2>Resume</h2>
+
+<p>If something looks like a duck and quack like a duck than it is a duck.
+Also it will be good to test such Ducks using rspec <a href="https://www.relishapp.com/rspec/rspec-core/docs/example-groups/shared-examples">shared_examples</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Monads the heart of the matter]]></title>
