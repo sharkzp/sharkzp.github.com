@@ -4,7 +4,7 @@
   <title><![CDATA[Root of Evil]]></title>
   <link href="http://sharkzp.github.io/atom.xml" rel="self"/>
   <link href="http://sharkzp.github.io/"/>
-  <updated>2013-06-17T08:58:38+03:00</updated>
+  <updated>2013-06-17T15:07:46+03:00</updated>
   <id>http://sharkzp.github.io/</id>
   <author>
     <name><![CDATA[Alex Topalov]]></name>
@@ -50,25 +50,21 @@ For instance you have a class that responsible for generating some View-presente
 <span class='line-number'>16</span>
 <span class='line-number'>17</span>
 <span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Presenter</span>
 </span><span class='line'>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
 </span><span class='line'>      <span class="k">case</span> <span class="n">subject</span>
-</span><span class='line'>      <span class="k">when</span> <span class="no">User</span>
-</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;User&quot;</span><span class="p">)</span>
-</span><span class='line'>      <span class="k">when</span> <span class="no">DepositMobileMoney</span>
-</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;DepositMobileMoney&quot;</span><span class="p">,</span> <span class="ss">label</span><span class="p">:</span> <span class="s1">&#39;Some label&#39;</span><span class="p">)</span>
-</span><span class='line'>      <span class="k">when</span> <span class="no">Account</span>
-</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;Account&quot;</span><span class="p">,</span> <span class="ss">label</span><span class="p">:</span> <span class="s1">&#39;label&#39;</span><span class="p">)</span>
-</span><span class='line'>      <span class="k">when</span> <span class="no">DepositVirtualMoney</span>
-</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">serializable_array</span>
-</span><span class='line'>      <span class="k">when</span> <span class="no">Event</span>
-</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">endpoint_attributes</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;Some type&quot;</span><span class="p">,</span> <span class="ss">label</span><span class="p">:</span> <span class="s1">&#39;Label to display&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">Post</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">commets_counter</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">WallPost</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">to_hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">commets_counter</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">Video</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">title</span><span class="p">:</span> <span class="s1">&#39;some title&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">Audio</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">to_json</span>
 </span><span class='line'>      <span class="k">when</span> <span class="no">NilClass</span>
 </span><span class='line'>        <span class="kp">nil</span>
 </span><span class='line'>      <span class="k">else</span>
-</span><span class='line'>        <span class="k">raise</span> <span class="no">NotImplementedError</span>
+</span><span class='line'>        <span class="k">raise</span> <span class="no">ArgumentError</span>
 </span><span class='line'>      <span class="k">end</span>
 </span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>  <span class="k">end</span>
@@ -118,28 +114,28 @@ This violates SOLID principles.</p>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Presenter</span>
 </span><span class='line'>  <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
 </span><span class='line'>    <span class="k">case</span> <span class="n">subject</span>
-</span><span class='line'>    <span class="k">when</span> <span class="no">User</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">Post</span>
 </span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
-</span><span class='line'>    <span class="k">when</span> <span class="no">DepositMobileMoney</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">WallPost</span>
 </span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
 </span><span class='line'>    <span class="k">when</span> <span class="no">Account</span>
 </span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
-</span><span class='line'>    <span class="k">when</span> <span class="no">DepositVirtualMoney</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">Video</span>
 </span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
-</span><span class='line'>    <span class="k">when</span> <span class="no">Event</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">Audio</span>
 </span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
 </span><span class='line'>    <span class="k">when</span> <span class="no">NilClass</span>
 </span><span class='line'>      <span class="kp">nil</span>
 </span><span class='line'>    <span class="k">else</span>
-</span><span class='line'>      <span class="k">raise</span> <span class="no">NotImplementedError</span>
+</span><span class='line'>      <span class="k">raise</span> <span class="no">ArgumentError</span>
 </span><span class='line'>    <span class="k">end</span>
 </span><span class='line'>  <span class="k">end</span>
 </span><span class='line'><span class="k">end</span>
 </span><span class='line'>
 </span><span class='line'><span class="c1">#For other classes this will be similar to</span>
-</span><span class='line'><span class="k">class</span> <span class="nc">User</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Post</span>
 </span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">description</span>
-</span><span class='line'>    <span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;User&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">commets_counter</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span>
 </span><span class='line'>  <span class="k">end</span>
 </span><span class='line'><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure>
