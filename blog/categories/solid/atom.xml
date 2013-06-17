@@ -4,7 +4,7 @@
   <title><![CDATA[Category: SOLID | Root of Evil]]></title>
   <link href="http://sharkzp.github.io/blog/categories/solid/atom.xml" rel="self"/>
   <link href="http://sharkzp.github.io/"/>
-  <updated>2013-06-17T00:04:38+03:00</updated>
+  <updated>2013-06-17T08:58:38+03:00</updated>
   <id>http://sharkzp.github.io/</id>
   <author>
     <name><![CDATA[Alex Topalov]]></name>
@@ -59,13 +59,13 @@ For instance you have a class that responsible for generating some View-presente
 </span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;def description(subject)</span>
 </span><span class='line'><span class="sr">  case subject</span>
 </span><span class='line'><span class="sr">  when User</span>
-</span><span class='line'><span class="sr">    subject.serializable_hash.merge!(type: &quot;MiMo User&quot;)</span>
-</span><span class='line'><span class="sr">  when Deposit</span>
-</span><span class='line'><span class="sr">    subject.as_json.merge!(type: &quot;Deposit&quot;, label: &#39;Some label&#39;)</span>
-</span><span class='line'><span class="sr">  when BankAccount</span>
-</span><span class='line'><span class="sr">    subject.as_json.merge!(type: &quot;Bank Account&quot;, label: &#39;label&#39;)</span>
-</span><span class='line'><span class="sr">  when Withdrawal</span>
-</span><span class='line'><span class="sr">    subject.counterparty_hash</span>
+</span><span class='line'><span class="sr">    subject.as_json.merge!(type: &quot;User&quot;)</span>
+</span><span class='line'><span class="sr">  when DepositMobileMoney</span>
+</span><span class='line'><span class="sr">    subject.as_json.merge!(type: &quot;DepositMobileMoney&quot;, label: &#39;Some label&#39;)</span>
+</span><span class='line'><span class="sr">  when Account</span>
+</span><span class='line'><span class="sr">    subject.as_json.merge!(type: &quot;Account&quot;, label: &#39;label&#39;)</span>
+</span><span class='line'><span class="sr">  when DepositVirtualMoney</span>
+</span><span class='line'><span class="sr">    subject.serializable_array</span>
 </span><span class='line'><span class="sr">  when Event</span>
 </span><span class='line'><span class="sr">    subject.endpoint_attributes.merge!(type: &quot;Some type&quot;, label: &#39;Label to display&#39;)</span>
 </span><span class='line'><span class="sr">  when NilClass</span>
@@ -131,11 +131,11 @@ This violates SOLID principles.</p>
 </span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;case subject</span>
 </span><span class='line'><span class="sr">when User</span>
 </span><span class='line'><span class="sr">  subject.description</span>
-</span><span class='line'><span class="sr">when Deposit</span>
+</span><span class='line'><span class="sr">when DepositMobileMoney</span>
 </span><span class='line'><span class="sr">  subject.description</span>
-</span><span class='line'><span class="sr">when BankAccount</span>
+</span><span class='line'><span class="sr">when Account</span>
 </span><span class='line'><span class="sr">  subject.description</span>
-</span><span class='line'><span class="sr">when Withdrawal</span>
+</span><span class='line'><span class="sr">when DepositVirtualMoney</span>
 </span><span class='line'><span class="sr">  subject.description</span>
 </span><span class='line'><span class="sr">when Event</span>
 </span><span class='line'><span class="sr">  subject.description</span>
@@ -154,7 +154,7 @@ This violates SOLID principles.</p>
 </span><span class='line'><span class="sr">&lt;p&gt;class User</span>
 </span><span class='line'><span class="sr">  def self.description&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">serializable_hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;MiMo User&quot;</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;User&quot;</span><span class="p">)</span>
 </span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>

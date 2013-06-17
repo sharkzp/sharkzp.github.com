@@ -4,7 +4,7 @@
   <title><![CDATA[Root of Evil]]></title>
   <link href="http://sharkzp.github.io/atom.xml" rel="self"/>
   <link href="http://sharkzp.github.io/"/>
-  <updated>2013-06-17T00:04:38+03:00</updated>
+  <updated>2013-06-17T08:58:38+03:00</updated>
   <id>http://sharkzp.github.io/</id>
   <author>
     <name><![CDATA[Alex Topalov]]></name>
@@ -56,13 +56,13 @@ For instance you have a class that responsible for generating some View-presente
 </span><span class='line'>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
 </span><span class='line'>      <span class="k">case</span> <span class="n">subject</span>
 </span><span class='line'>      <span class="k">when</span> <span class="no">User</span>
-</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">serializable_hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;MiMo User&quot;</span><span class="p">)</span>
-</span><span class='line'>      <span class="k">when</span> <span class="no">Deposit</span>
-</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;Deposit&quot;</span><span class="p">,</span> <span class="ss">label</span><span class="p">:</span> <span class="s1">&#39;Some label&#39;</span><span class="p">)</span>
-</span><span class='line'>      <span class="k">when</span> <span class="no">BankAccount</span>
-</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;Bank Account&quot;</span><span class="p">,</span> <span class="ss">label</span><span class="p">:</span> <span class="s1">&#39;label&#39;</span><span class="p">)</span>
-</span><span class='line'>      <span class="k">when</span> <span class="no">Withdrawal</span>
-</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">counterparty_hash</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;User&quot;</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">DepositMobileMoney</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;DepositMobileMoney&quot;</span><span class="p">,</span> <span class="ss">label</span><span class="p">:</span> <span class="s1">&#39;Some label&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">Account</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;Account&quot;</span><span class="p">,</span> <span class="ss">label</span><span class="p">:</span> <span class="s1">&#39;label&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">DepositVirtualMoney</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">serializable_array</span>
 </span><span class='line'>      <span class="k">when</span> <span class="no">Event</span>
 </span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">endpoint_attributes</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;Some type&quot;</span><span class="p">,</span> <span class="ss">label</span><span class="p">:</span> <span class="s1">&#39;Label to display&#39;</span><span class="p">)</span>
 </span><span class='line'>      <span class="k">when</span> <span class="no">NilClass</span>
@@ -120,11 +120,11 @@ This violates SOLID principles.</p>
 </span><span class='line'>    <span class="k">case</span> <span class="n">subject</span>
 </span><span class='line'>    <span class="k">when</span> <span class="no">User</span>
 </span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
-</span><span class='line'>    <span class="k">when</span> <span class="no">Deposit</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">DepositMobileMoney</span>
 </span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
-</span><span class='line'>    <span class="k">when</span> <span class="no">BankAccount</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">Account</span>
 </span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
-</span><span class='line'>    <span class="k">when</span> <span class="no">Withdrawal</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">DepositVirtualMoney</span>
 </span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
 </span><span class='line'>    <span class="k">when</span> <span class="no">Event</span>
 </span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
@@ -139,7 +139,7 @@ This violates SOLID principles.</p>
 </span><span class='line'><span class="c1">#For other classes this will be similar to</span>
 </span><span class='line'><span class="k">class</span> <span class="nc">User</span>
 </span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">description</span>
-</span><span class='line'>    <span class="n">serializable_hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;MiMo User&quot;</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">type</span><span class="p">:</span> <span class="s2">&quot;User&quot;</span><span class="p">)</span>
 </span><span class='line'>  <span class="k">end</span>
 </span><span class='line'><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure>
