@@ -4,7 +4,7 @@
   <title><![CDATA[Category: STI | Root of Evil]]></title>
   <link href="http://sharkzp.github.io/blog/categories/sti/atom.xml" rel="self"/>
   <link href="http://sharkzp.github.io/"/>
-  <updated>2013-06-17T15:07:46+03:00</updated>
+  <updated>2013-08-25T20:59:31-04:00</updated>
   <id>http://sharkzp.github.io/</id>
   <author>
     <name><![CDATA[Alex Topalov]]></name>
@@ -16,13 +16,13 @@
   <entry>
     <title type="html"><![CDATA[Don't use STI in your Rails Apps]]></title>
     <link href="http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps/"/>
-    <updated>2013-04-20T11:33:00+03:00</updated>
+    <updated>2013-04-20T11:33:00-04:00</updated>
     <id>http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps</id>
-    <content type="html"><![CDATA[<p><blockquote><p></p></p><p><p>Single table inheritance is a way to emulate object-oriented inheritance in a<br/>relational database. When mapping from a database table to an object in an<br/>object-oriented language, a field in the database identifies what class in the hierarchy the object belongs to</p></p><p><p></p><footer><strong>Sincerely Your Wiki</strong> <cite><a href='http://en.wikipedia.org/wiki/Single_Table_Inheritance'>en.wikipedia.org/wiki/&hellip;</a></cite></footer></blockquote></p>
+    <content type="html"><![CDATA[<p><blockquote><p></p></p><p><p>Single table inheritance is a way to emulate object-oriented inheritance in a<br/>relational database. When mapping from a database table to an object in an<br/>object-oriented language, a field in the database identifies what class in the hierarchy the object belongs to</p></p><p><p></p><footer><strong>Sincerely Your Wiki <a href="http://en.wikipedia.org/wiki/Single_Table_Inheritance">http://en.wikipedia.org/wiki/Single_Table_Inheritance</a></strong></footer></blockquote></p>
 
 <p>Single Table Inheritance(STI) is a useful and sharp technique,
 and like any other high level instrument you should use it in an appropriate place.
-Let's take a closer look with examples</p>
+Let&rsquo;s take a closer look with examples</p>
 
 <!-- more -->
 
@@ -100,7 +100,7 @@ Let's take a closer look with examples</p>
 </span><span class='line'><span class="sr">end</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h3>Let's see what will happens in terminal:</h3>
+<h3>Let&rsquo;s see what will happens in terminal:</h3>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -116,13 +116,13 @@ Let's take a closer look with examples</p>
 </span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">004</span> <span class="o">&gt;</span> <span class="n">comment_attachment</span> <span class="o">=</span> <span class="no">CommentAttachment</span><span class="o">.</span><span class="n">create</span>
 </span><span class='line'>  <span class="o">=&gt;</span> <span class="c1">#&lt;CommentAttachment id: 4, type: &quot;CommentAttachment&quot;, attachment: nil&gt;&lt;/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">006</span> <span class="o">&gt;</span> <span class="no">Asset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;id, type&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">006</span> <span class="o">&gt;</span> <span class="no">Asset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="nb">id</span><span class="p">,</span> <span class="n">type</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;)</span>
 </span><span class='line'>  <span class="o">=&gt;</span> <span class="o">[</span><span class="c1">#&lt;Asset id: 1, type: nil&gt;, #&lt;Image id: 2, type: &quot;Image&quot;&gt;, #&lt;Avatar id: 3, type: &quot;Avatar&quot;&gt;, #&lt;CommentAttachment id: 4, type: &quot;CommentAttachment&quot;&gt;]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>How does it work?</h3>
 
-<p><blockquote><p>Active Record allows inheritance by storing the name of the class in a column that by default is named “type” (can be changed by overwriting Base.inheritance_column)</p><footer><strong>http://api.rubyonrails.org/classes/ActiveRecord/Base.html</strong></footer></blockquote></p>
+<p><blockquote><p>Active Record allows inheritance by storing the name of the class in a column that by default is named “type” (can be changed by overwriting Base.inheritance_column)</p><footer><strong><a href="http://api.rubyonrails.org/classes/ActiveRecord/Base.html">http://api.rubyonrails.org/classes/ActiveRecord/Base.html</a></strong></footer></blockquote></p>
 
 <p>So when you inherit from some table your child tables will insert class name in <code>type</code> column.
 This looks good, you create one table, make an abstraction and right now everything work nice.
@@ -176,7 +176,7 @@ And in the end you will face this kind of scheme:
 <span class='line-number'>11</span>
 <span class='line-number'>12</span>
 <span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">create_table</span> <span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="ss">:force</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">create_table</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">assets</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="ss">:force</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;t.string   &quot;type&quot;</span>
 </span><span class='line'><span class="sr">t.string   &quot;attachment&quot;</span>
@@ -215,7 +215,7 @@ Maybe someday you will decide to use your <code>CommentAttachment</code> for att
 <span class='line-number'>20</span>
 <span class='line-number'>21</span>
 <span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">create_table</span> <span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="ss">:force</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">create_table</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">assets</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="ss">:force</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;t.string   &quot;type&quot;</span>
 </span><span class='line'><span class="sr">t.string   &quot;attachment&quot;</span>

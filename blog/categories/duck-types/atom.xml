@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Duck types | Root of Evil]]></title>
   <link href="http://sharkzp.github.io/blog/categories/duck-types/atom.xml" rel="self"/>
   <link href="http://sharkzp.github.io/"/>
-  <updated>2013-06-17T15:07:46+03:00</updated>
+  <updated>2013-08-25T20:59:31-04:00</updated>
   <id>http://sharkzp.github.io/</id>
   <author>
     <name><![CDATA[Alex Topalov]]></name>
@@ -16,14 +16,14 @@
   <entry>
     <title type="html"><![CDATA[All about Duck Types]]></title>
     <link href="http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types/"/>
-    <updated>2013-06-16T23:26:00+03:00</updated>
+    <updated>2013-06-16T23:26:00-04:00</updated>
     <id>http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types</id>
     <content type="html"><![CDATA[<h3>Introduction</h3>
 
 <p>I heard a lot about Duck Types in Rails but I have never saw how can I used in a real-time application.
 Today I will show you how to use duck types in examples.</p>
 
-<p><blockquote><p>Duck Typing is a style of dynamic typing in which an object's methods and properties determine the valid semantics, rather than its inheritance from a particular class or implementation of a specific interface.</p></blockquote></p>
+<p><blockquote><p>Duck Typing is a style of dynamic typing in which an object&rsquo;s methods and properties determine the valid semantics, rather than its inheritance from a particular class or implementation of a specific interface.</p></blockquote></p>
 
 <!-- more -->
 
@@ -75,7 +75,7 @@ For instance you have a class that responsible for generating some View-presente
 </span><span class='line'><span class="sr">&lt;p&gt;  end</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<h2>What's wrong?</h2>
+<h2>What&rsquo;s wrong?</h2>
 
 <p>In some day you could came up to such solution. And on what you should take a look
 This violates SOLID principles.</p>
@@ -86,7 +86,7 @@ This violates SOLID principles.</p>
 </ol>
 
 
-<p>Let's refactoring this:
+<p>Let&rsquo;s refactoring this:
 <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>

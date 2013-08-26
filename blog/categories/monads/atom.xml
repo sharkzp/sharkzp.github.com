@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Monads | Root of Evil]]></title>
   <link href="http://sharkzp.github.io/blog/categories/monads/atom.xml" rel="self"/>
   <link href="http://sharkzp.github.io/"/>
-  <updated>2013-06-17T15:07:46+03:00</updated>
+  <updated>2013-08-25T20:59:31-04:00</updated>
   <id>http://sharkzp.github.io/</id>
   <author>
     <name><![CDATA[Alex Topalov]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Monads the heart of the matter]]></title>
     <link href="http://sharkzp.github.io/blog/2013/04/27/monads-the-heart-of-the-matter/"/>
-    <updated>2013-04-27T12:33:00+03:00</updated>
+    <updated>2013-04-27T12:33:00-04:00</updated>
     <id>http://sharkzp.github.io/blog/2013/04/27/monads-the-heart-of-the-matter</id>
     <content type="html"><![CDATA[<h3>Introduction</h3>
 
@@ -37,7 +37,7 @@ So, what is Monad about?</p>
 </ul>
 
 
-<p>Let's create it step by step
+<p>Let&rsquo;s create it step by step
 <div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -106,9 +106,9 @@ So, what is Monad about?</p>
 <h3>There are few other types.</h3>
 
 <ol>
-<li>IO Monad - take result from first function and pass it to second.</li>
-<li>Maybe - if first function return value than pass it to second function, otherwise return nil. This one implemented as a gem <a href="https://github.com/pzol/monadic">This link</a>.</li>
-<li>Either monad - if function will fail it will return Failure object, otherwise it will return success. This used for handling errors and fighting exceptions.
+<li>IO Monad &ndash; take result from first function and pass it to second.</li>
+<li>Maybe &ndash; if first function return value than pass it to second function, otherwise return nil. This one implemented as a gem <a href="https://github.com/pzol/monadic">This link</a>.</li>
+<li>Either monad &ndash; if function will fail it will return Failure object, otherwise it will return success. This used for handling errors and fighting exceptions.
 And others.</li>
 </ol>
 
