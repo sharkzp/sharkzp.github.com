@@ -1,0 +1,438 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>All about Duck Types - Root of Evil</title>
+  <meta name="author" content="Alex Topalov">
+
+  
+  <meta name="description" content="Introduction I heard a lot about Duck Types in Rails but I have never saw how can I used in a real-time application.
+Today I will show you how to use &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Root of Evil" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-40295541-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Root of Evil</a></h1>
+  
+    <h2>Talking about ruby and other stuff.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:sharkzp.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">All About Duck Types</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-16T23:26:00-04:00" pubdate data-updated="true">Jun 16<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3>Introduction</h3>
+
+<p>I heard a lot about Duck Types in Rails but I have never saw how can I used in a real-time application.
+Today I will show you how to use duck types in examples.</p>
+
+<blockquote><p>Duck Typing is a style of dynamic typing in which an object&#8217;s methods and properties determine the valid semantics, rather than its inheritance from a particular class or implementation of a specific interface.</p></blockquote>
+
+
+<!-- more -->
+
+
+<p>This sounds a bit weird for me, lets make an example.
+For instance you have a class that responsible for generating some View-presenter data according to objects that you pass</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Presenter</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">case</span> <span class="n">subject</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">Post</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">commets_counter</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">WallPost</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">to_hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">commets_counter</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">Video</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">title</span><span class="p">:</span> <span class="s1">&#39;some title&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">Audio</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">to_json</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">NilClass</span>
+</span><span class='line'>        <span class="kp">nil</span>
+</span><span class='line'>      <span class="k">else</span>
+</span><span class='line'>        <span class="k">raise</span> <span class="no">ArgumentError</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>What&rsquo;s wrong?</h2>
+
+<p>In some day you could came up to such solution. And on what you should take a look
+This violates SOLID principles.</p>
+
+<ol>
+<li>Why presenter class should know about view representation about each class?</li>
+<li>We did not make any modifications with data that came up from class, than why we cannot move this method to class itself?</li>
+</ol>
+
+
+<p>Let&rsquo;s refactoring this:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Presenter</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">case</span> <span class="n">subject</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">Post</span>
+</span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">WallPost</span>
+</span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">Account</span>
+</span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">Video</span>
+</span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">Audio</span>
+</span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">NilClass</span>
+</span><span class='line'>      <span class="kp">nil</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="k">raise</span> <span class="no">ArgumentError</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">#For other classes this will be similar to</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Post</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">description</span>
+</span><span class='line'>    <span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">commets_counter</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If subject will not implement description than rails will raise an exception.
+Next iteration of refactoring</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Presenter</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Congratulation you successfully implement Duck type :)
+But now our presenter looks like <a href="http://sourcemaking.com/refactoring/lazy-class">lazy class</a>.
+So this class could be totally removed.</p>
+
+<h2>Resume</h2>
+
+<p>If something looks like a duck and quack like a duck than it is a duck.
+Also it will be good to test such Ducks using rspec <a href="https://www.relishapp.com/rspec/rspec-core/docs/example-groups/shared-examples">shared_examples</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Alex Topalov</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-16T23:26:00-04:00" pubdate data-updated="true">Jun 16<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/duck-types/'>Duck types</a>, <a class='category' href='/blog/categories/oop/'>OOP</a>, <a class='category' href='/blog/categories/rails/'>Rails</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/solid/'>SOLID</a>, <a class='category' href='/blog/categories/best-practices/'>best practices</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types/" data-via="sharkzp" data-counturl="http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/04/27/monads-the-heart-of-the-matter/" title="Previous Post: Monads the heart of the matter">&laquo; Monads the heart of the matter</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/08/25/refactoring-wrappers/" title="Next Post: Refactoring Wrappers">Refactoring Wrappers &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/08/25/refactoring-wrappers/">Refactoring Wrappers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/16/all-about-duck-types/">All about Duck Types</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/27/monads-the-heart-of-the-matter/">Monads the heart of the matter</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/20/dont-use-sti-in-your-rails-apps/">Don't use STI in your Rails Apps</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/sharkzp">@sharkzp</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'sharkzp',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Alex Topalov -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'sharkzp';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types/';
+        var disqus_url = 'http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,577 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Refactoring Wrappers - Root of Evil</title>
+  <meta name="author" content="Alex Topalov">
+
+  
+  <meta name="description" content="Introduction Very often in my everyday practice I faced a task when you need to create a communication between your own services or some 3rd party &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://sharkzp.github.io/blog/2013/08/25/refactoring-wrappers">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="Root of Evil" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/lib/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-40295541-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Root of Evil</a></h1>
+  
+    <h2>Talking about ruby and other stuff.</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:sharkzp.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Refactoring Wrappers</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-25T20:11:00-04:00" pubdate data-updated="true">Aug 25<span>th</span>, 2013</time>
+        
+         | <a href="#disqus_thread">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3>Introduction</h3>
+
+<p>Very often in my everyday practice I faced a task when you need to create a communication between your own services or some 3rd party service that don&rsquo;t have a implementation yet. So what is the best way to doing that?</p>
+
+<blockquote><p>Wrapper - it is a piece of code that will be responsible for communication between your application and external service.</p></blockquote>
+
+
+<!-- more -->
+
+
+<h3>Identicating problem</h3>
+
+<p>When you have a task that implies creation of wrapper you could came up with the easiest solution like:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">ServiceWrapper</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">server_rise</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="no">URI</span><span class="p">(</span><span class="no">Settings</span><span class="o">.</span><span class="n">service_url</span> <span class="o">+</span> <span class="s2">&quot;server_rise&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="n">server_name</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="kp">true</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>But as everyone knew requirements are changes often :) So this could be finished like this:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">ServiceWrapper</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">server_rise</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;server_rise&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="n">server_name</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="kp">true</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">add_platform</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;add_platform&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="ss">platform</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="n">request</span><span class="o">[</span><span class="s1">&#39;response&#39;</span><span class="o">]</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">platform_rise</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;platform_rise&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="ss">platform</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="kp">true</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">exceed_storage</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;exceed_storage&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="n">server_name</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="n">request</span><span class="o">[</span><span class="s1">&#39;response&#39;</span><span class="o">]</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">three_fourths_traffic</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;three_fourths_traffic&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="n">server_name</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="n">request</span><span class="o">[</span><span class="s1">&#39;response&#39;</span><span class="o">]</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">exceed_traffic</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;exceed_traffic&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="n">server_name</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="n">request</span><span class="o">[</span><span class="s1">&#39;response&#39;</span><span class="o">]</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">server_down</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;server_down&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="n">server_name</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="n">request</span><span class="o">[</span><span class="s1">&#39;response&#39;</span><span class="o">]</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kp">private</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">service_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+</span><span class='line'>    <span class="no">URI</span><span class="p">(</span><span class="no">Settings</span><span class="o">.</span><span class="n">service_url</span> <span class="o">+</span> <span class="n">command</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This doesn&rsquo;t even looks like a object oriented approach, this is complete mess that could be extended became even worse. So what we could do about that?</p>
+
+<h3>Understanding problem</h3>
+
+<p>When you develop application especially application in ruby(You remember that this is Object Oriented language, right?) you should keep in mind what objects you create and how messages goes thought them. Let&rsquo;s indicate our objects regarding this task scope:</p>
+
+<ul>
+<li>Server</li>
+<li>Platform</li>
+<li>Notification</li>
+</ul>
+
+
+<p>So basically we have:</p>
+
+<ul>
+<li>Initiate Server creation ( isn&rsquo;t this sounds like <code>Object#new</code>? )</li>
+<li>Server down ( isn&rsquo;t this changing the state of object ? )</li>
+<li>Same for platform</li>
+<li>Simple notifications that actually could be treated exactly how you think about your <a href="http://guides.rubyonrails.org/action_mailer_basics.html">mailers</a></li>
+</ul>
+
+
+<h3>Solution</h3>
+
+<p>Now we see what objects we have, lets write simple implementations for <code>Server</code>.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Wrapper</span><span class="o">::</span><span class="no">Server</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@server</span> <span class="o">=</span> <span class="n">server</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">save!</span>
+</span><span class='line'>    <span class="n">response</span> <span class="o">=</span> <span class="ss">Wrapper</span><span class="p">:</span><span class="ss">:Request</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;server_rise&quot;</span><span class="p">,</span> <span class="n">server_name</span><span class="p">:</span> <span class="vi">@server</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">response</span><span class="o">.</span><span class="n">success?</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From your code it will looks like this <code>Wrapper::Server.new(@server).save!</code> name it as a <code>wrapper</code> is a bad idea, so you should probably name it with a service_name and add Wrapper and the end if necessary. Let&rsquo;s see how <code>request</code> will looks like:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">module</span> <span class="nn">Wrapper::Request</span>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Error</span> <span class="o">&lt;</span> <span class="no">StandardError</span><span class="p">;</span> <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="p">{})</span>
+</span><span class='line'>    <span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="no">Settings</span><span class="o">.</span><span class="n">service_url</span> <span class="o">+</span> <span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">to_json</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="ss">:json</span><span class="p">,</span> <span class="ss">accept</span><span class="p">:</span> <span class="ss">:json</span><span class="p">)</span>
+</span><span class='line'>    <span class="ss">Wrapper</span><span class="p">:</span><span class="ss">:Response</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">rescue</span> <span class="ss">RestClient</span><span class="p">:</span><span class="ss">:Exception</span> <span class="o">=&gt;</span> <span class="n">e</span>
+</span><span class='line'>    <span class="ss">Wrapper</span><span class="p">:</span><span class="ss">:Response</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">rescue</span> <span class="ss">Errno</span><span class="p">:</span><span class="ss">:ECONNREFUSED</span> <span class="o">=&gt;</span> <span class="n">e</span>
+</span><span class='line'>    <span class="k">raise</span> <span class="ss">Wrapper</span><span class="p">:</span><span class="ss">:Request</span><span class="o">::</span><span class="no">Error</span><span class="p">,</span> <span class="s2">&quot;Service is down&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And <code>response</code></p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Wrapper</span><span class="o">::</span><span class="no">Response</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">json_body</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">json_body</span> <span class="o">=</span> <span class="n">json_body</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">success?</span>
+</span><span class='line'>    <span class="o">!!</span><span class="n">json_body</span><span class="o">[</span><span class="s1">&#39;response&#39;</span><span class="o">]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is just a proof of concept that will give your a direction in which you should move on. Now you will works with objects instead of hacks.</p>
+
+<h3>Conclusion</h3>
+
+<p>You should always treat your messages as a communication between objects. Even if coding in this way takes more time. But the more time your spend today the less time you will need to spend in future.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Alex Topalov</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-25T20:11:00-04:00" pubdate data-updated="true">Aug 25<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/oop/'>OOP</a>, <a class='category' href='/blog/categories/paterns/'>Paterns</a>, <a class='category' href='/blog/categories/rails/'>Rails</a>, <a class='category' href='/blog/categories/ruby/'>Ruby</a>, <a class='category' href='/blog/categories/wrapper/'>Wrapper</a>, <a class='category' href='/blog/categories/best-practices/'>best practices</a>, <a class='category' href='/blog/categories/service/'>service</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://sharkzp.github.io/blog/2013/08/25/refactoring-wrappers/" data-via="sharkzp" data-counturl="http://sharkzp.github.io/blog/2013/08/25/refactoring-wrappers/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/06/16/all-about-duck-types/" title="Previous Post: All about Duck Types">&laquo; All about Duck Types</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/08/25/refactoring-wrappers/">Refactoring Wrappers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/16/all-about-duck-types/">All about Duck Types</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/27/monads-the-heart-of-the-matter/">Monads the heart of the matter</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/04/20/dont-use-sti-in-your-rails-apps/">Don't use STI in your Rails Apps</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/sharkzp">@sharkzp</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'sharkzp',
+            count: 3,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Alex Topalov -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'sharkzp';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://sharkzp.github.io/blog/2013/08/25/refactoring-wrappers/';
+        var disqus_url = 'http://sharkzp.github.io/blog/2013/08/25/refactoring-wrappers/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

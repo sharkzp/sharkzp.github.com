@@ -1,0 +1,864 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Root of Evil]]></title>
+  <link href="http://sharkzp.github.io/atom.xml" rel="self"/>
+  <link href="http://sharkzp.github.io/"/>
+  <updated>2013-08-25T20:59:31-04:00</updated>
+  <id>http://sharkzp.github.io/</id>
+  <author>
+    <name><![CDATA[Alex Topalov]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Refactoring Wrappers]]></title>
+    <link href="http://sharkzp.github.io/blog/2013/08/25/refactoring-wrappers/"/>
+    <updated>2013-08-25T20:11:00-04:00</updated>
+    <id>http://sharkzp.github.io/blog/2013/08/25/refactoring-wrappers</id>
+    <content type="html"><![CDATA[<h3>Introduction</h3>
+
+<p>Very often in my everyday practice I faced a task when you need to create a communication between your own services or some 3rd party service that don&rsquo;t have a implementation yet. So what is the best way to doing that?</p>
+
+<blockquote><p>Wrapper - it is a piece of code that will be responsible for communication between your application and external service.</p></blockquote>
+
+
+<!-- more -->
+
+
+<h3>Identicating problem</h3>
+
+<p>When you have a task that implies creation of wrapper you could came up with the easiest solution like:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">ServiceWrapper</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">server_rise</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="no">URI</span><span class="p">(</span><span class="no">Settings</span><span class="o">.</span><span class="n">service_url</span> <span class="o">+</span> <span class="s2">&quot;server_rise&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="n">server_name</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="kp">true</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>But as everyone knew requirements are changes often :) So this could be finished like this:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">ServiceWrapper</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">server_rise</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;server_rise&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="n">server_name</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="kp">true</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">add_platform</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;add_platform&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="ss">platform</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="n">request</span><span class="o">[</span><span class="s1">&#39;response&#39;</span><span class="o">]</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">platform_rise</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;platform_rise&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="ss">platform</span><span class="p">:</span> <span class="n">platform</span><span class="o">.</span><span class="n">name</span><span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="kp">true</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">exceed_storage</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;exceed_storage&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="n">server_name</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="n">request</span><span class="o">[</span><span class="s1">&#39;response&#39;</span><span class="o">]</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">three_fourths_traffic</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;three_fourths_traffic&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="n">server_name</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="n">request</span><span class="o">[</span><span class="s1">&#39;response&#39;</span><span class="o">]</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">exceed_traffic</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;exceed_traffic&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="n">server_name</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="n">request</span><span class="o">[</span><span class="s1">&#39;response&#39;</span><span class="o">]</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">server_down</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">request</span> <span class="o">=</span> <span class="ss">Net</span><span class="p">:</span><span class="ss">:HTTP</span><span class="o">.</span><span class="n">post_form</span><span class="p">(</span><span class="n">service_url</span><span class="p">(</span><span class="s2">&quot;server_down&quot;</span><span class="p">),</span> <span class="p">{</span> <span class="n">server_name</span><span class="p">:</span> <span class="n">server</span><span class="o">.</span><span class="n">name</span> <span class="p">})</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">request</span><span class="o">[</span><span class="s1">&#39;success&#39;</span><span class="o">]</span>
+</span><span class='line'>      <span class="n">request</span><span class="o">[</span><span class="s1">&#39;response&#39;</span><span class="o">]</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="kp">false</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="kp">private</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">service_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span>
+</span><span class='line'>    <span class="no">URI</span><span class="p">(</span><span class="no">Settings</span><span class="o">.</span><span class="n">service_url</span> <span class="o">+</span> <span class="n">command</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This doesn&rsquo;t even looks like a object oriented approach, this is complete mess that could be extended became even worse. So what we could do about that?</p>
+
+<h3>Understanding problem</h3>
+
+<p>When you develop application especially application in ruby(You remember that this is Object Oriented language, right?) you should keep in mind what objects you create and how messages goes thought them. Let&rsquo;s indicate our objects regarding this task scope:</p>
+
+<ul>
+<li>Server</li>
+<li>Platform</li>
+<li>Notification</li>
+</ul>
+
+
+<p>So basically we have:</p>
+
+<ul>
+<li>Initiate Server creation ( isn&rsquo;t this sounds like <code>Object#new</code>? )</li>
+<li>Server down ( isn&rsquo;t this changing the state of object ? )</li>
+<li>Same for platform</li>
+<li>Simple notifications that actually could be treated exactly how you think about your <a href="http://guides.rubyonrails.org/action_mailer_basics.html">mailers</a></li>
+</ul>
+
+
+<h3>Solution</h3>
+
+<p>Now we see what objects we have, lets write simple implementations for <code>Server</code>.</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Wrapper</span><span class="o">::</span><span class="no">Server</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="n">server</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@server</span> <span class="o">=</span> <span class="n">server</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">save!</span>
+</span><span class='line'>    <span class="n">response</span> <span class="o">=</span> <span class="ss">Wrapper</span><span class="p">:</span><span class="ss">:Request</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s2">&quot;server_rise&quot;</span><span class="p">,</span> <span class="n">server_name</span><span class="p">:</span> <span class="vi">@server</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">response</span><span class="o">.</span><span class="n">success?</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>From your code it will looks like this <code>Wrapper::Server.new(@server).save!</code> name it as a <code>wrapper</code> is a bad idea, so you should probably name it with a service_name and add Wrapper and the end if necessary. Let&rsquo;s see how <code>request</code> will looks like:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">module</span> <span class="nn">Wrapper::Request</span>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Error</span> <span class="o">&lt;</span> <span class="no">StandardError</span><span class="p">;</span> <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">post</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="p">{})</span>
+</span><span class='line'>    <span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="no">Settings</span><span class="o">.</span><span class="n">service_url</span> <span class="o">+</span> <span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">to_json</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="ss">:json</span><span class="p">,</span> <span class="ss">accept</span><span class="p">:</span> <span class="ss">:json</span><span class="p">)</span>
+</span><span class='line'>    <span class="ss">Wrapper</span><span class="p">:</span><span class="ss">:Response</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">rescue</span> <span class="ss">RestClient</span><span class="p">:</span><span class="ss">:Exception</span> <span class="o">=&gt;</span> <span class="n">e</span>
+</span><span class='line'>    <span class="ss">Wrapper</span><span class="p">:</span><span class="ss">:Response</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">rescue</span> <span class="ss">Errno</span><span class="p">:</span><span class="ss">:ECONNREFUSED</span> <span class="o">=&gt;</span> <span class="n">e</span>
+</span><span class='line'>    <span class="k">raise</span> <span class="ss">Wrapper</span><span class="p">:</span><span class="ss">:Request</span><span class="o">::</span><span class="no">Error</span><span class="p">,</span> <span class="s2">&quot;Service is down&quot;</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And <code>response</code></p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Wrapper</span><span class="o">::</span><span class="no">Response</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">json_body</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">json_body</span> <span class="o">=</span> <span class="n">json_body</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">success?</span>
+</span><span class='line'>    <span class="o">!!</span><span class="n">json_body</span><span class="o">[</span><span class="s1">&#39;response&#39;</span><span class="o">]</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is just a proof of concept that will give your a direction in which you should move on. Now you will works with objects instead of hacks.</p>
+
+<h3>Conclusion</h3>
+
+<p>You should always treat your messages as a communication between objects. Even if coding in this way takes more time. But the more time your spend today the less time you will need to spend in future.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[All about Duck Types]]></title>
+    <link href="http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types/"/>
+    <updated>2013-06-16T23:26:00-04:00</updated>
+    <id>http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types</id>
+    <content type="html"><![CDATA[<h3>Introduction</h3>
+
+<p>I heard a lot about Duck Types in Rails but I have never saw how can I used in a real-time application.
+Today I will show you how to use duck types in examples.</p>
+
+<blockquote><p>Duck Typing is a style of dynamic typing in which an object&#8217;s methods and properties determine the valid semantics, rather than its inheritance from a particular class or implementation of a specific interface.</p></blockquote>
+
+
+<!-- more -->
+
+
+<p>This sounds a bit weird for me, lets make an example.
+For instance you have a class that responsible for generating some View-presenter data according to objects that you pass</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Presenter</span>
+</span><span class='line'>    <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">case</span> <span class="n">subject</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">Post</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">commets_counter</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">WallPost</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">to_hash</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">commets_counter</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">Video</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">attributes</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="ss">title</span><span class="p">:</span> <span class="s1">&#39;some title&#39;</span><span class="p">)</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">Audio</span>
+</span><span class='line'>        <span class="n">subject</span><span class="o">.</span><span class="n">to_json</span>
+</span><span class='line'>      <span class="k">when</span> <span class="no">NilClass</span>
+</span><span class='line'>        <span class="kp">nil</span>
+</span><span class='line'>      <span class="k">else</span>
+</span><span class='line'>        <span class="k">raise</span> <span class="no">ArgumentError</span>
+</span><span class='line'>      <span class="k">end</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>What&rsquo;s wrong?</h2>
+
+<p>In some day you could came up to such solution. And on what you should take a look
+This violates SOLID principles.</p>
+
+<ol>
+<li>Why presenter class should know about view representation about each class?</li>
+<li>We did not make any modifications with data that came up from class, than why we cannot move this method to class itself?</li>
+</ol>
+
+
+<p>Let&rsquo;s refactoring this:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Presenter</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">case</span> <span class="n">subject</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">Post</span>
+</span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">WallPost</span>
+</span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">Account</span>
+</span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">Video</span>
+</span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">Audio</span>
+</span><span class='line'>      <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
+</span><span class='line'>    <span class="k">when</span> <span class="no">NilClass</span>
+</span><span class='line'>      <span class="kp">nil</span>
+</span><span class='line'>    <span class="k">else</span>
+</span><span class='line'>      <span class="k">raise</span> <span class="no">ArgumentError</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1">#For other classes this will be similar to</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Post</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">description</span>
+</span><span class='line'>    <span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">commets_counter</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If subject will not implement description than rails will raise an exception.
+Next iteration of refactoring</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Presenter</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span>
+</span><span class='line'>    <span class="n">subject</span><span class="o">.</span><span class="n">description</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Congratulation you successfully implement Duck type :)
+But now our presenter looks like <a href="http://sourcemaking.com/refactoring/lazy-class">lazy class</a>.
+So this class could be totally removed.</p>
+
+<h2>Resume</h2>
+
+<p>If something looks like a duck and quack like a duck than it is a duck.
+Also it will be good to test such Ducks using rspec <a href="https://www.relishapp.com/rspec/rspec-core/docs/example-groups/shared-examples">shared_examples</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Monads the heart of the matter]]></title>
+    <link href="http://sharkzp.github.io/blog/2013/04/27/monads-the-heart-of-the-matter/"/>
+    <updated>2013-04-27T12:33:00-04:00</updated>
+    <id>http://sharkzp.github.io/blog/2013/04/27/monads-the-heart-of-the-matter</id>
+    <content type="html"><![CDATA[<h3>Introduction</h3>
+
+<p>Monads came form functional programming like Haskell. And this is not a secret from no-one that Ruby takes some parts from this languages.
+So, what is Monad about?</p>
+
+<blockquote><p>Monad is a structure that represents computations. This allows the programmer to build pipelines that process data in steps, in which each action is decorated with additional processing rules provided by the monad. Today we will create monad and see how it will help us.</p></blockquote>
+
+
+<!-- more -->
+
+
+<p>Monad is made up of three things:</p>
+
+<ul>
+<li>Container for a value.</li>
+<li>Wrap the parameter into instance of monad.</li>
+<li>Binding functions to the container.</li>
+</ul>
+
+
+<p>Let&rsquo;s create it step by step</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Monad</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@v</span> <span class="o">=</span> <span class="n">value</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">unit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">self</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="vi">@v</span><span class="p">))</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It will produce</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">h</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">a</span><span class="p">:</span> <span class="p">{</span> <span class="ss">c</span><span class="p">:</span> <span class="p">{</span> <span class="ss">d</span><span class="p">:</span> <span class="p">{</span> <span class="ss">e</span><span class="p">:</span> <span class="mi">4</span> <span class="p">}</span> <span class="p">}</span> <span class="p">}</span> <span class="p">}</span>
+</span><span class='line'>  <span class="no">Monad</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">lambda</span><span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:a</span><span class="p">)})</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">lambda</span><span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:c</span><span class="p">)})</span>
+</span><span class='line'>  <span class="c1">#=&gt; {:d=&gt;{:e=&gt;4}}</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="n">v</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span class='line'>  <span class="no">Monad</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">lambda</span><span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="p">})</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">lambda</span><span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span> <span class="o">/</span> <span class="mi">2</span> <span class="p">})</span>
+</span><span class='line'>  <span class="c1">#=&gt; 50</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This is the basic realization of IO Monads.</p>
+
+<h3>There are few other types.</h3>
+
+<ol>
+<li>IO Monad &ndash; take result from first function and pass it to second.</li>
+<li>Maybe &ndash; if first function return value than pass it to second function, otherwise return nil. This one implemented as a gem <a href="https://github.com/pzol/monadic">This link</a>.</li>
+<li>Either monad &ndash; if function will fail it will return Failure object, otherwise it will return success. This used for handling errors and fighting exceptions.
+And others.</li>
+</ol>
+
+
+<h3>Simple implementation of Maybe monad</h3>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Monad</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span class='line'>    <span class="vi">@v</span> <span class="o">=</span> <span class="n">value</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">unit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span class='line'>    <span class="nb">self</span><span class="o">.</span><span class="n">class</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">begin</span>
+</span><span class='line'>      <span class="nb">self</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">call</span><span class="p">(</span><span class="vi">@v</span><span class="p">))</span>
+</span><span class='line'>    <span class="k">rescue</span>
+</span><span class='line'>      <span class="nb">self</span><span class="o">.</span><span class="n">unit</span><span class="p">(</span><span class="kp">nil</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>It will produce</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">h1</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">a</span><span class="p">:</span> <span class="p">{</span> <span class="ss">c</span><span class="p">:</span> <span class="p">{</span> <span class="ss">d</span><span class="p">:</span> <span class="p">{</span> <span class="ss">e</span><span class="p">:</span> <span class="mi">4</span> <span class="p">}</span> <span class="p">}</span> <span class="p">}</span> <span class="p">}</span>
+</span><span class='line'><span class="n">h2</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'><span class="n">f1</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:a</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'><span class="n">f2</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:c</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'><span class="n">f3</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:d</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'><span class="n">f4</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:e</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Monad</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">h1</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">f1</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">f2</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">f3</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">f4</span><span class="p">)</span>
+</span><span class='line'><span class="c1">#=&gt; 4</span>
+</span><span class='line'><span class="no">Monad</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">h2</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">f1</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">f2</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">f3</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="n">f4</span><span class="p">)</span>
+</span><span class='line'><span class="c1">#=&gt; nil</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>This way you could avoid exception handling in you applications that depend on external request
+For example</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">TwitterCallbackController</span> <span class="o">&lt;</span> <span class="ss">ActionController</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">create</span>
+</span><span class='line'>    <span class="k">if</span> <span class="n">partner_uuid</span> <span class="o">=</span> <span class="no">Monad</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">request</span><span class="p">)</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:body</span><span class="p">)</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:partner_uuid</span><span class="p">)</span>
+</span><span class='line'>      <span class="no">User</span><span class="o">.</span><span class="n">authenticate_by_uuid</span><span class="p">(</span><span class="n">partner_uuid</span><span class="p">)</span>
+</span><span class='line'>    <span class="k">end</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Other fields of interest:</h3>
+
+<ul>
+<li>Fetching Data from Database</li>
+<li>Processing XML/SOAP results</li>
+<li>Complex calculations</li>
+<li>etc</li>
+</ul>
+
+
+<h2>Resume</h2>
+
+<p>Monad its a powerful technique that could be used in your application in various places. But it could encapsulate some intermediate results that you may want to see. For example error handling could be more useful when you will see real answer from 3rd party applications.</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Don't use STI in your Rails Apps]]></title>
+    <link href="http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps/"/>
+    <updated>2013-04-20T11:33:00-04:00</updated>
+    <id>http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps</id>
+    <content type="html"><![CDATA[<blockquote><p>Single table inheritance is a way to emulate object-oriented inheritance in a<br/>relational database. When mapping from a database table to an object in an<br/>object-oriented language, a field in the database identifies what class in the hierarchy the object belongs to</p><footer><strong>Sincerely Your Wiki</strong> <cite><a href='http://en.wikipedia.org/wiki/Single_Table_Inheritance'>en.wikipedia.org/wiki/&hellip;</a></cite></footer></blockquote>
+
+
+<p>Single Table Inheritance(STI) is a useful and sharp technique,
+and like any other high level instrument you should use it in an appropriate place.
+Let&rsquo;s take a closer look with examples</p>
+
+<!-- more -->
+
+
+<p>For example you have a Blog, inside this blog you will have for sure such objects:</p>
+
+<ul>
+<li>Image</li>
+<li>User Avatar</li>
+<li>Comments Attachments</li>
+</ul>
+
+
+<p>First thing that you should create is a table from which you will inherit:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># app/models/asset.rb</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Asset</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="c1"># Fields:</span>
+</span><span class='line'>    <span class="c1">#   String attachment</span>
+</span><span class='line'>    <span class="c1">#   String type</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># app/models/image.rb</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Image</span> <span class="o">&lt;</span> <span class="no">Asset</span>
+</span><span class='line'>  <span class="n">mount_uploader</span> <span class="ss">:attachment</span><span class="p">,</span> <span class="no">ImageUploader</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># app/models/avatar.rb</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Avatar</span> <span class="o">&lt;</span> <span class="no">Asset</span>
+</span><span class='line'>  <span class="n">mount_uploader</span> <span class="ss">:attachment</span><span class="p">,</span> <span class="no">AvatarUploader</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># app/models/comment_attachment.rb</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">CommentAttachment</span> <span class="o">&lt;</span> <span class="no">Asset</span>
+</span><span class='line'>  <span class="n">mount_uploader</span> <span class="ss">:attachment</span><span class="p">,</span> <span class="no">CommentAttachmentUploader</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>Let&rsquo;s see what will happens in terminal:</h3>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">001</span> <span class="o">&gt;</span> <span class="n">asset</span> <span class="o">=</span> <span class="no">Asset</span><span class="o">.</span><span class="n">create</span>
+</span><span class='line'>  <span class="o">=&gt;</span> <span class="c1">#&lt;Asset id: 1, type: nil, attachment: nil&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">004</span> <span class="o">&gt;</span> <span class="n">comment_attachment</span> <span class="o">=</span> <span class="no">CommentAttachment</span><span class="o">.</span><span class="n">create</span>
+</span><span class='line'>  <span class="o">=&gt;</span> <span class="c1">#&lt;CommentAttachment id: 4, type: &quot;CommentAttachment&quot;, attachment: nil&gt;</span>
+</span><span class='line'>
+</span><span class='line'>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">006</span> <span class="o">&gt;</span> <span class="no">Asset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="s1">&#39;id, type&#39;</span><span class="p">)</span>
+</span><span class='line'>  <span class="o">=&gt;</span> <span class="o">[</span><span class="c1">#&lt;Asset id: 1, type: nil&gt;, #&lt;Image id: 2, type: &quot;Image&quot;&gt;, #&lt;Avatar id: 3, type: &quot;Avatar&quot;&gt;, #&lt;CommentAttachment id: 4, type: &quot;CommentAttachment&quot;&gt;]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>How does it work?</h3>
+
+<blockquote><p>Active Record allows inheritance by storing the name of the class in a column that by default is named “type” (can be changed by overwriting Base.inheritance_column)</p><footer><strong>http://api.rubyonrails.org/classes/ActiveRecord/Base.html</strong></footer></blockquote>
+
+
+<p>So when you inherit from some table your child tables will insert class name in <code>type</code> column.
+This looks good, you create one table, make an abstraction and right now everything work nice.
+When you will specify each uploader you could create different behavior and image size(I will not cover it in this post feel free to visit <a href="https://github.com/jnicklas/carrierwave">This link</a>)
+You could go to your boss and say they your are awesome :)</p>
+
+<h2>Where is the evil?</h2>
+
+<p>What will happens when you will create a User?</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># app/models/user.rb</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">User</span> <span class="o">&lt;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="n">has_one</span> <span class="ss">:avatar</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># app/models/avatar.rb</span>
+</span><span class='line'><span class="k">class</span> <span class="nc">Avatar</span> <span class="o">&lt;</span> <span class="no">Asset</span>
+</span><span class='line'>  <span class="n">belongs_to</span> <span class="ss">:user</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>You should add <code>user_id</code> to your asset table.
+Oh, yes you also need a <code>Post</code>, that will include <code>Images</code>, and yes you have a <code>Comments</code>, that attach to you <code>CommentAttachment</code>.
+And in the end you will face this kind of scheme:</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">create_table</span> <span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="ss">:force</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;type&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;attachment&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;user_id&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;post_id&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;comment_id&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;commentator_id&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">datetime</span> <span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="ss">:null</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">datetime</span> <span class="s2">&quot;updated_at&quot;</span><span class="p">,</span> <span class="ss">:null</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Half of your table will be filled with <code>NULL</code>.
+Maybe someday you will decide to use your <code>CommentAttachment</code> for attaching <code>Audio</code> and <code>video</code>?</p>
+
+<figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">create_table</span> <span class="s2">&quot;assets&quot;</span><span class="p">,</span> <span class="ss">:force</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;type&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;attachment&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;user_id&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;post_id&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;comment_id&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;commentator_id&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;audio_bitrate&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;thumbnail&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">boolean</span>  <span class="s2">&quot;is_in_gallery&quot;</span> <span class="c1">#for cases when you create a gallery of images</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;artist&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;album&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">integer</span>  <span class="s2">&quot;year&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">string</span>   <span class="s2">&quot;genre&quot;</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">integer</span>  <span class="s2">&quot;bitrate&quot;</span>
+</span><span class='line'>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">datetime</span> <span class="s2">&quot;created_at&quot;</span><span class="p">,</span> <span class="ss">:null</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+</span><span class='line'>    <span class="n">t</span><span class="o">.</span><span class="n">datetime</span> <span class="s2">&quot;updated_at&quot;</span><span class="p">,</span> <span class="ss">:null</span> <span class="o">=&gt;</span> <span class="kp">false</span>
+</span><span class='line'>  <span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Right now your table will looks like a crap. And your project will became soo huge that you could not to refactoring well.</p>
+
+<h2>Conclusion</h2>
+
+<p>Use STI only when you totally sure that you will never change it.
+This post based on a true story.</p>
+]]></content>
+  </entry>
+  
+</feed>
