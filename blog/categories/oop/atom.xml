@@ -4,7 +4,7 @@
   <title><![CDATA[Category: OOP | Root of Evil]]></title>
   <link href="http://sharkzp.github.io/blog/categories/oop/atom.xml" rel="self"/>
   <link href="http://sharkzp.github.io/"/>
-  <updated>2013-09-28T20:29:05-04:00</updated>
+  <updated>2013-12-16T17:51:44+02:00</updated>
   <id>http://sharkzp.github.io/</id>
   <author>
     <name><![CDATA[Alex Topalov]]></name>
@@ -14,9 +14,239 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Callbacks Extraction]]></title>
+    <link href="http://sharkzp.github.io/blog/2013/12/16/callbacks-extraction/"/>
+    <updated>2013-12-16T17:22:00+02:00</updated>
+    <id>http://sharkzp.github.io/blog/2013/12/16/callbacks-extraction</id>
+    <content type="html"><![CDATA[<p><blockquote><p></p></p><p><p>The unbridled use of the go to statement has an immediate consequence that it becomes terribly hard to find a meaningful set of coordinates in which to describe the process progress.</p></p><p><p></p><footer><strong>Edsger W. Dijkstra <a href="http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html">http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html</a></strong></footer></blockquote></p>
+
+<p>Rails provide powerful callback technique and powerful tool it could injure in newbie hands.</p>
+
+<!-- more -->
+
+
+<h3>Understanding the problem</h3>
+
+<p>For example we have simple blog engine. Where we have <code>Post, User, Comment</code>
+And system should create a default post with random comments when <code>User</code> with type <code>admin</code> creates. This could through rails callbacks</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">User</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="n">after_create</span> <span class="ss">:create_post</span><span class="p">,</span> <span class="k">if</span><span class="p">:</span> <span class="ss">:admin?</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  private</span>
+</span><span class='line'><span class="sr">  def create_post&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">posts</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">Post</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">default_post_attributes</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Post &amp;lt; ActiveRecord::Base</span>
+</span><span class='line'><span class="sr">  after_create :create_comments&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="kp">private</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">create_comments</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;comments &amp;lt;&amp;lt; Comment.create(defaul_comment_attributes)</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">Comment</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="n">before_create</span> <span class="ss">:ensure_user_existance</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  private</span>
+</span><span class='line'><span class="sr">  def ensure_user_existance&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">unless</span> <span class="n">user</span>
+</span><span class='line'>  <span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">default_user_attrubutes</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>After some time passed you decide that creating user for comments was a bad idea and you remove it.
+But when you create another one admin you need to search through three different objects to find out the root of problem. This is the simplest example but you could find even more weird problems and real hell in practice.</p>
+
+<h3>Solution</h3>
+
+<p>For extracting this behavior out of objects we need to keep in mind some of best practices. Sandi Matz recommends to keep your objects unitary and easy to follow check out <a href="http://robots.thoughtbot.com/sandi-metz-rules-for-developers">this</a> blog post for more details.</p>
+
+<p>So lets introduce new object that for now will encapsulate logic around admin user</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">AdminUser</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">save</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;user.save</span>
+</span><span class='line'><span class="sr">create_post</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="kp">private</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">create_post</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;posts &amp;lt;&amp;lt; Post.create(comments: [Comment.create(user: user)])</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">User</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Post &amp;lt; ActiveRecord::Base</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">Comment</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>This way we could extract any kind of callbacks out of User class that belongs to specific type of user of certain conditions.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">AdminUser</span>
+</span><span class='line'>  <span class="kp">attr_reader</span> <span class="ss">:attributes</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  def initialize(options = {})&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">before_initialize</span>
+</span><span class='line'><span class="n">attributes</span> <span class="o">=</span> <span class="n">options</span><span class="o">[</span><span class="ss">:user</span><span class="o">]</span>
+</span><span class='line'><span class="n">after_initialize</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  def save&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">before_save</span>
+</span><span class='line'><span class="n">user</span><span class="o">.</span><span class="n">save</span>
+</span><span class='line'><span class="n">after_save</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  private</span>
+</span><span class='line'><span class="sr">  def user&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="no">User</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  #&amp;hellip;</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>I recommend to always keep your objects as clean and small as possible, so any changes that you need to introduce touch single class that easy to understand and follow.</p>
+
+<h3>Resume</h3>
+
+<p>Extracting callbacks out of Domain Class could be useful refactoring technique and any of us should use to avoid callback hells and code smells. Unitary class is much easier to test and change.</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Refactoring Wrappers]]></title>
     <link href="http://sharkzp.github.io/blog/2013/08/25/refactoring-wrappers/"/>
-    <updated>2013-08-25T20:11:00-04:00</updated>
+    <updated>2013-08-25T20:11:00+03:00</updated>
     <id>http://sharkzp.github.io/blog/2013/08/25/refactoring-wrappers</id>
     <content type="html"><![CDATA[<h3>Introduction</h3>
 
@@ -401,7 +631,7 @@
   <entry>
     <title type="html"><![CDATA[All about Duck Types]]></title>
     <link href="http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types/"/>
-    <updated>2013-06-16T23:26:00-04:00</updated>
+    <updated>2013-06-16T23:26:00+03:00</updated>
     <id>http://sharkzp.github.io/blog/2013/06/16/all-about-duck-types</id>
     <content type="html"><![CDATA[<h3>Introduction</h3>
 
@@ -574,7 +804,7 @@ Also it will be good to test such Ducks using rspec <a href="https://www.relisha
   <entry>
     <title type="html"><![CDATA[Monads the heart of the matter]]></title>
     <link href="http://sharkzp.github.io/blog/2013/04/27/monads-the-heart-of-the-matter/"/>
-    <updated>2013-04-27T12:33:00-04:00</updated>
+    <updated>2013-04-27T12:33:00+03:00</updated>
     <id>http://sharkzp.github.io/blog/2013/04/27/monads-the-heart-of-the-matter</id>
     <content type="html"><![CDATA[<h3>Introduction</h3>
 
@@ -804,7 +1034,7 @@ For example
   <entry>
     <title type="html"><![CDATA[Don't use STI in your Rails Apps]]></title>
     <link href="http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps/"/>
-    <updated>2013-04-20T11:33:00-04:00</updated>
+    <updated>2013-04-20T11:33:00+03:00</updated>
     <id>http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps</id>
     <content type="html"><![CDATA[<p><blockquote><p></p></p><p><p>Single table inheritance is a way to emulate object-oriented inheritance in a<br/>relational database. When mapping from a database table to an object in an<br/>object-oriented language, a field in the database identifies what class in the hierarchy the object belongs to</p></p><p><p></p><footer><strong>Sincerely Your Wiki <a href="http://en.wikipedia.org/wiki/Single_Table_Inheritance">http://en.wikipedia.org/wiki/Single_Table_Inheritance</a></strong></footer></blockquote></p>
 

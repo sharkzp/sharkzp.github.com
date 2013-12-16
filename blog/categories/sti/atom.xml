@@ -4,7 +4,7 @@
   <title><![CDATA[Category: STI | Root of Evil]]></title>
   <link href="http://sharkzp.github.io/blog/categories/sti/atom.xml" rel="self"/>
   <link href="http://sharkzp.github.io/"/>
-  <updated>2013-09-28T20:29:05-04:00</updated>
+  <updated>2013-12-16T17:51:44+02:00</updated>
   <id>http://sharkzp.github.io/</id>
   <author>
     <name><![CDATA[Alex Topalov]]></name>
@@ -16,7 +16,7 @@
   <entry>
     <title type="html"><![CDATA[Don't use STI in your Rails Apps]]></title>
     <link href="http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps/"/>
-    <updated>2013-04-20T11:33:00-04:00</updated>
+    <updated>2013-04-20T11:33:00+03:00</updated>
     <id>http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps</id>
     <content type="html"><![CDATA[<p><blockquote><p></p></p><p><p>Single table inheritance is a way to emulate object-oriented inheritance in a<br/>relational database. When mapping from a database table to an object in an<br/>object-oriented language, a field in the database identifies what class in the hierarchy the object belongs to</p></p><p><p></p><footer><strong>Sincerely Your Wiki <a href="http://en.wikipedia.org/wiki/Single_Table_Inheritance">http://en.wikipedia.org/wiki/Single_Table_Inheritance</a></strong></footer></blockquote></p>
 
