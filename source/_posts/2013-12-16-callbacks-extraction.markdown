@@ -11,13 +11,13 @@ The unbridled use of the go to statement has an immediate consequence that it be
 
 {% endblockquote %}
 
-Rails provide powerful callback technique and powerful tool it could injure in newbie hands.
+Rails provide powerful callback technique and as a powerful tool it could injure in newbie hands.
 
 <!-- more -->
 
 ###Understanding the problem
-For example we have simple blog engine. Where we have <code>Post, User, Comment</code>
-And system should create a default post with random comments when <code>User</code> with type <code>admin</code> creates. This could through rails callbacks
+For example we have simple blog engine. Where we have <code>Posts, Users, Comments</code>
+And system should create a default post with random comments when <code>User</code> with type <code>admin</code> created. This could be done through rails callbacks
 
 {% codeblock lang:ruby%}
 class User < ActiveRecord::Base
@@ -51,7 +51,7 @@ end
 {% endcodeblock %}
 
 After some time passed you decide that creating user for comments was a bad idea and you remove it.
-But when you create another one admin you need to search through three different objects to find out the root of problem. This is the simplest example but you could find even more weird problems and real hell in practice.
+But when you create another one admin you need to search through three different objects to find out why your default post does not have comments. This is the simplest example but you could find even more weird problems and real hell in practice.
 
 ###Solution
 For extracting this behavior out of objects we need to keep in mind some of best practices. Sandi Matz recommends to keep your objects unitary and easy to follow check out [this](http://robots.thoughtbot.com/sandi-metz-rules-for-developers) blog post for more details.
