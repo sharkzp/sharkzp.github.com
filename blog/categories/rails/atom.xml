@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rails | Root of Evil]]></title>
   <link href="http://sharkzp.github.io/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://sharkzp.github.io/"/>
-  <updated>2013-12-16T18:25:03+02:00</updated>
+  <updated>2013-12-16T18:25:33+02:00</updated>
   <id>http://sharkzp.github.io/</id>
   <author>
     <name><![CDATA[Alex Topalov]]></name>
@@ -18,11 +18,7 @@
     <link href="http://sharkzp.github.io/blog/2013/12/16/callbacks-extraction/"/>
     <updated>2013-12-16T17:22:00+02:00</updated>
     <id>http://sharkzp.github.io/blog/2013/12/16/callbacks-extraction</id>
-    <content type="html"><![CDATA[<p>{% blockquote Edsger W. Dijkstra <a href="http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html">http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html</a> %}</p>
-
-<p>The unbridled use of the go to statement has an immediate consequence that it becomes terribly hard to find a meaningful set of coordinates in which to describe the process progress.</p>
-
-<p>{% endblockquote %}</p>
+    <content type="html"><![CDATA[<p><blockquote><p></p></p><p><p>The unbridled use of the go to statement has an immediate consequence that it becomes terribly hard to find a meaningful set of coordinates in which to describe the process progress.</p></p><p><p></p><footer><strong>Edsger W. Dijkstra <a href="http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html">http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html</a></strong></footer></blockquote></p>
 
 <p>Rails provide powerful callback technique and as a powerful tool it could injure in newbie hands.</p>
 
@@ -34,45 +30,81 @@
 <p>For example we have simple blog engine. Where we have <code>Posts, Users, Comments</code>
 And system should create a default post with random comments when <code>User</code> with type <code>admin</code> created. This could be done through rails callbacks</p>
 
-<p>{% codeblock lang:ruby%}
-class User &lt; ActiveRecord::Base
-  after_create :create_post, if: :admin?</p>
-
-<p>  private
-  def create_post</p>
-
-<pre><code>posts &lt;&lt; Post.create(default_post_attributes)
-</code></pre>
-
-<p>  end
-end</p>
-
-<p>class Post &lt; ActiveRecord::Base
-  after_create :create_comments</p>
-
-<p>  private
-  def create_comments</p>
-
-<pre><code>comments &lt;&lt; Comment.create(defaul_comment_attributes)
-</code></pre>
-
-<p>  end
-end</p>
-
-<p>class Comment &lt; ActiveRecord::Base
-  before_create :ensure_user_existance</p>
-
-<p>  private
-  def ensure_user_existance</p>
-
-<pre><code>unless user
-  user = User.create(default_user_attrubutes)
-end
-</code></pre>
-
-<p>  end
-end
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">User</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="n">after_create</span> <span class="ss">:create_post</span><span class="p">,</span> <span class="k">if</span><span class="p">:</span> <span class="ss">:admin?</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  private</span>
+</span><span class='line'><span class="sr">  def create_post&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">posts</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span><span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">Post</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">default_post_attributes</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Post &amp;lt; ActiveRecord::Base</span>
+</span><span class='line'><span class="sr">  after_create :create_comments&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="kp">private</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">create_comments</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;comments &amp;lt;&amp;lt; Comment.create(defaul_comment_attributes)</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">Comment</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="n">before_create</span> <span class="ss">:ensure_user_existance</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  private</span>
+</span><span class='line'><span class="sr">  def ensure_user_existance&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">unless</span> <span class="n">user</span>
+</span><span class='line'>  <span class="n">user</span> <span class="o">=</span> <span class="no">User</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">default_user_attrubutes</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>After some time passed you decide that creating user for comments was a bad idea and you remove it.
 But when you create another one admin you need to search through three different objects to find out why your default post does not have comments. This is the simplest example but you could find even more weird problems and real hell in practice.</p>
@@ -83,70 +115,125 @@ But when you create another one admin you need to search through three different
 
 <p>So lets introduce new object that for now will encapsulate logic around admin user</p>
 
-<p>{% codeblock lang:ruby%}
-class AdminUser
-  def save</p>
-
-<pre><code>user.save
-create_post
-</code></pre>
-
-<p>  end</p>
-
-<p>  private
-  def create_post</p>
-
-<pre><code>posts &lt;&lt; Post.create(comments: [Comment.create(user: user)])
-</code></pre>
-
-<p>  end
-end</p>
-
-<p>class User &lt; ActiveRecord::Base
-end</p>
-
-<p>class Post &lt; ActiveRecord::Base
-end</p>
-
-<p>class Comment &lt; ActiveRecord::Base
-end
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">AdminUser</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">save</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;user.save</span>
+</span><span class='line'><span class="sr">create_post</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="kp">private</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">create_post</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;posts &amp;lt;&amp;lt; Post.create(comments: [Comment.create(user: user)])</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">User</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Post &amp;lt; ActiveRecord::Base</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">Comment</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="ss">ActiveRecord</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>This way we could extract any kind of callbacks out of User class that belongs to specific type of user of certain conditions.</p>
 
-<p>{% codeblock lang:ruby%}
-class AdminUser
-  attr_reader :attributes</p>
-
-<p>  def initialize(options = {})</p>
-
-<pre><code>before_initialize
-attributes = options[:user]
-after_initialize
-</code></pre>
-
-<p>  end</p>
-
-<p>  def save</p>
-
-<pre><code>before_save
-user.save
-after_save
-</code></pre>
-
-<p>  end</p>
-
-<p>  private
-  def user</p>
-
-<pre><code>User.new(attributes)
-</code></pre>
-
-<p>  end</p>
-
-<p>  #&hellip;
-end
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">AdminUser</span>
+</span><span class='line'>  <span class="kp">attr_reader</span> <span class="ss">:attributes</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  def initialize(options = {})&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">before_initialize</span>
+</span><span class='line'><span class="n">attributes</span> <span class="o">=</span> <span class="n">options</span><span class="o">[</span><span class="ss">:user</span><span class="o">]</span>
+</span><span class='line'><span class="n">after_initialize</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  def save&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">before_save</span>
+</span><span class='line'><span class="n">user</span><span class="o">.</span><span class="n">save</span>
+</span><span class='line'><span class="n">after_save</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  private</span>
+</span><span class='line'><span class="sr">  def user&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="no">User</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">attributes</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  #&amp;hellip;</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>I recommend to always keep your objects as clean and small as possible, so any changes that you need to introduce touch single class that easy to understand and follow.</p>
 
@@ -165,9 +252,7 @@ end
 
 <p>Very often in my everyday practice I faced a task when you need to create a communication between your own services or some 3rd party service that don&rsquo;t have a implementation yet. So what is the best way to doing that?</p>
 
-<p>{% blockquote %}
-Wrapper &ndash; it is a piece of code that will be responsible for communication between your application and external service.
-{% endblockquote %}</p>
+<p><blockquote><p>Wrapper &ndash; it is a piece of code that will be responsible for communication between your application and external service.</p></blockquote></p>
 
 <!-- more -->
 
@@ -176,119 +261,223 @@ Wrapper &ndash; it is a piece of code that will be responsible for communication
 
 <p>When you have a task that implies creation of wrapper you could came up with the easiest solution like:</p>
 
-<p>{% codeblock lang:ruby%}
-class ServiceWrapper
-  def self.server_rise(server)</p>
-
-<pre><code>request = Net::HTTP.post_form(URI(Settings.service_url + "server_rise"), { server_name: server.name })
-if request['success']
-  true
-else
-  false
-end
-</code></pre>
-
-<p>  end
-end
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">ServiceWrapper</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">server_rise</span><span class="p">(</span><span class="n">server</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;request = Net::HTTP.post_form(URI(Settings.service_url + &quot;server_rise&quot;), { server_name: server.name })</span>
+</span><span class='line'><span class="sr">if request[&#39;success&#39;]</span>
+</span><span class='line'><span class="sr">  true</span>
+</span><span class='line'><span class="sr">else</span>
+</span><span class='line'><span class="sr">  false</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>But as everyone knew requirements are changes often :) So this could be finished like this:</p>
 
-<p>{% codeblock lang:ruby%}
-class ServiceWrapper
-  def self.server_rise(server)</p>
-
-<pre><code>request = Net::HTTP.post_form(service_url("server_rise"), { server_name: server.name })
-if request['success']
-  true
-else
-  false
-end
-</code></pre>
-
-<p>  end</p>
-
-<p>  def self.add_platform(platform)</p>
-
-<pre><code>request = Net::HTTP.post_form(service_url("add_platform"), { platform: platform.name})
-if request['success']
-  request['response']
-else
-  false
-end
-</code></pre>
-
-<p>  end</p>
-
-<p>  def self.platform_rise(platform)</p>
-
-<pre><code>request = Net::HTTP.post_form(service_url("platform_rise"), { platform: platform.name})
-if request['success']
-  true
-else
-  false
-end
-</code></pre>
-
-<p>  end</p>
-
-<p>  def exceed_storage(server)</p>
-
-<pre><code>request = Net::HTTP.post_form(service_url("exceed_storage"), { server_name: server.name })
-if request['success']
-  request['response']
-else
-  false
-end
-</code></pre>
-
-<p>  end</p>
-
-<p>  def three_fourths_traffic(server)</p>
-
-<pre><code>request = Net::HTTP.post_form(service_url("three_fourths_traffic"), { server_name: server.name })
-if request['success']
-  request['response']
-else
-  false
-end
-</code></pre>
-
-<p>  end</p>
-
-<p>  def exceed_traffic(server)</p>
-
-<pre><code>request = Net::HTTP.post_form(service_url("exceed_traffic"), { server_name: server.name })
-if request['success']
-  request['response']
-else
-  false
-end
-</code></pre>
-
-<p>  end</p>
-
-<p>  def server_down(server)</p>
-
-<pre><code>request = Net::HTTP.post_form(service_url("server_down"), { server_name: server.name })
-if request['success']
-  request['response']
-else
-  false
-end
-</code></pre>
-
-<p>  end</p>
-
-<p>  private
-  def self.service_url(url, options)</p>
-
-<pre><code>URI(Settings.service_url + command)
-</code></pre>
-
-<p>  end
-end
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+<span class='line-number'>51</span>
+<span class='line-number'>52</span>
+<span class='line-number'>53</span>
+<span class='line-number'>54</span>
+<span class='line-number'>55</span>
+<span class='line-number'>56</span>
+<span class='line-number'>57</span>
+<span class='line-number'>58</span>
+<span class='line-number'>59</span>
+<span class='line-number'>60</span>
+<span class='line-number'>61</span>
+<span class='line-number'>62</span>
+<span class='line-number'>63</span>
+<span class='line-number'>64</span>
+<span class='line-number'>65</span>
+<span class='line-number'>66</span>
+<span class='line-number'>67</span>
+<span class='line-number'>68</span>
+<span class='line-number'>69</span>
+<span class='line-number'>70</span>
+<span class='line-number'>71</span>
+<span class='line-number'>72</span>
+<span class='line-number'>73</span>
+<span class='line-number'>74</span>
+<span class='line-number'>75</span>
+<span class='line-number'>76</span>
+<span class='line-number'>77</span>
+<span class='line-number'>78</span>
+<span class='line-number'>79</span>
+<span class='line-number'>80</span>
+<span class='line-number'>81</span>
+<span class='line-number'>82</span>
+<span class='line-number'>83</span>
+<span class='line-number'>84</span>
+<span class='line-number'>85</span>
+<span class='line-number'>86</span>
+<span class='line-number'>87</span>
+<span class='line-number'>88</span>
+<span class='line-number'>89</span>
+<span class='line-number'>90</span>
+<span class='line-number'>91</span>
+<span class='line-number'>92</span>
+<span class='line-number'>93</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">ServiceWrapper</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">server_rise</span><span class="p">(</span><span class="n">server</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;request = Net::HTTP.post_form(service_url(&quot;server_rise&quot;), { server_name: server.name })</span>
+</span><span class='line'><span class="sr">if request[&#39;success&#39;]</span>
+</span><span class='line'><span class="sr">  true</span>
+</span><span class='line'><span class="sr">else</span>
+</span><span class='line'><span class="sr">  false</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">add_platform</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;request = Net::HTTP.post_form(service_url(&quot;add_platform&quot;), { platform: platform.name})</span>
+</span><span class='line'><span class="sr">if request[&#39;success&#39;]</span>
+</span><span class='line'><span class="sr">  request[&#39;response&#39;]</span>
+</span><span class='line'><span class="sr">else</span>
+</span><span class='line'><span class="sr">  false</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">platform_rise</span><span class="p">(</span><span class="n">platform</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;request = Net::HTTP.post_form(service_url(&quot;platform_rise&quot;), { platform: platform.name})</span>
+</span><span class='line'><span class="sr">if request[&#39;success&#39;]</span>
+</span><span class='line'><span class="sr">  true</span>
+</span><span class='line'><span class="sr">else</span>
+</span><span class='line'><span class="sr">  false</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nf">exceed_storage</span><span class="p">(</span><span class="n">server</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;request = Net::HTTP.post_form(service_url(&quot;exceed_storage&quot;), { server_name: server.name })</span>
+</span><span class='line'><span class="sr">if request[&#39;success&#39;]</span>
+</span><span class='line'><span class="sr">  request[&#39;response&#39;]</span>
+</span><span class='line'><span class="sr">else</span>
+</span><span class='line'><span class="sr">  false</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nf">three_fourths_traffic</span><span class="p">(</span><span class="n">server</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;request = Net::HTTP.post_form(service_url(&quot;three_fourths_traffic&quot;), { server_name: server.name })</span>
+</span><span class='line'><span class="sr">if request[&#39;success&#39;]</span>
+</span><span class='line'><span class="sr">  request[&#39;response&#39;]</span>
+</span><span class='line'><span class="sr">else</span>
+</span><span class='line'><span class="sr">  false</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nf">exceed_traffic</span><span class="p">(</span><span class="n">server</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;request = Net::HTTP.post_form(service_url(&quot;exceed_traffic&quot;), { server_name: server.name })</span>
+</span><span class='line'><span class="sr">if request[&#39;success&#39;]</span>
+</span><span class='line'><span class="sr">  request[&#39;response&#39;]</span>
+</span><span class='line'><span class="sr">else</span>
+</span><span class='line'><span class="sr">  false</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nf">server_down</span><span class="p">(</span><span class="n">server</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;request = Net::HTTP.post_form(service_url(&quot;server_down&quot;), { server_name: server.name })</span>
+</span><span class='line'><span class="sr">if request[&#39;success&#39;]</span>
+</span><span class='line'><span class="sr">  request[&#39;response&#39;]</span>
+</span><span class='line'><span class="sr">else</span>
+</span><span class='line'><span class="sr">  false</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="kp">private</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">service_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">options</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;URI(Settings.service_url + command)</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>This doesn&rsquo;t even looks like a object oriented approach, this is complete mess that could be extended became even worse. So what we could do about that?</p>
 
@@ -317,70 +506,119 @@ end
 
 <p>Now we see what objects we have, lets write simple implementations for <code>Server</code>.</p>
 
-<p>{% codeblock lang:ruby%}
-class Wrapper::Server
-  def new(server)</p>
-
-<pre><code>@server = server
-</code></pre>
-
-<p>  end</p>
-
-<p>  def self.save!</p>
-
-<pre><code>response = Wrapper::Request.post("server_rise", server_name: @server.name)
-response.success?
-</code></pre>
-
-<p>  end
-end
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Wrapper</span><span class="o">::</span><span class="no">Server</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">new</span><span class="p">(</span><span class="n">server</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;@server = server</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nc">self</span><span class="o">.</span><span class="nf">save!</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;response = Wrapper::Request.post(&quot;server_rise&quot;, server_name: @server.name)</span>
+</span><span class='line'><span class="sr">response.success?</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>From your code it will looks like this <code>Wrapper::Server.new(@server).save!</code> name it as a <code>wrapper</code> is a bad idea, so you should probably name it with a service_name and add Wrapper and the end if necessary. Let&rsquo;s see how <code>request</code> will looks like:</p>
 
-<p>{% codeblock lang:ruby%}
-module Wrapper::Request
-  class Error &lt; StandardError; end</p>
-
-<p>  def self.post(url, params = {})</p>
-
-<pre><code>response = RestClient.post(Settings.service_url + url, params.to_json, content_type: :json, accept: :json)
-Wrapper::Response.new(response.body)
-</code></pre>
-
-<p>  rescue RestClient::Exception => e</p>
-
-<pre><code>Wrapper::Response.new(e.response)
-</code></pre>
-
-<p>  rescue Errno::ECONNREFUSED => e</p>
-
-<pre><code>raise Wrapper::Request::Error, "Service is down"
-</code></pre>
-
-<p>  end
-end
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">module</span> <span class="nn">Wrapper::Request</span>
+</span><span class='line'>  <span class="k">class</span> <span class="nc">Error</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="no">StandardError</span><span class="p">;</span> <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  def self.post(url, params = {})&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">response</span> <span class="o">=</span> <span class="no">RestClient</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="no">Settings</span><span class="o">.</span><span class="n">service_url</span> <span class="o">+</span> <span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">to_json</span><span class="p">,</span> <span class="n">content_type</span><span class="p">:</span> <span class="ss">:json</span><span class="p">,</span> <span class="ss">accept</span><span class="p">:</span> <span class="ss">:json</span><span class="p">)</span>
+</span><span class='line'><span class="ss">Wrapper</span><span class="p">:</span><span class="ss">:Response</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">body</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">rescue</span> <span class="ss">RestClient</span><span class="p">:</span><span class="ss">:Exception</span> <span class="o">=&gt;</span> <span class="n">e</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;Wrapper::Response.new(e.response)</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  rescue Errno::ECONNREFUSED =&gt; e&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="k">raise</span> <span class="ss">Wrapper</span><span class="p">:</span><span class="ss">:Request</span><span class="o">::</span><span class="no">Error</span><span class="p">,</span> <span class="s2">&quot;Service is down&quot;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>And <code>response</code></p>
 
-<p>{% codeblock lang:ruby%}
-class Wrapper::Response
-  def initialize(json_body)</p>
-
-<pre><code>json_body = json_body
-</code></pre>
-
-<p>  end</p>
-
-<p>  def success?</p>
-
-<pre><code>!!json_body['response']
-</code></pre>
-
-<p>  end
-end
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Wrapper</span><span class="o">::</span><span class="no">Response</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">json_body</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;json_body = json_body</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nf">success?</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;!!json_body[&#39;response&#39;]</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>This is just a proof of concept that will give your a direction in which you should move on. Now you will works with objects instead of hacks.</p>
 
@@ -400,9 +638,7 @@ end
 <p>I heard a lot about Duck Types in Rails but I have never saw how can I used in a real-time application.
 Today I will show you how to use duck types in examples.</p>
 
-<p>{% blockquote %}
-Duck Typing is a style of dynamic typing in which an object&rsquo;s methods and properties determine the valid semantics, rather than its inheritance from a particular class or implementation of a specific interface.
-{% endblockquote %}</p>
+<p><blockquote><p>Duck Typing is a style of dynamic typing in which an object&rsquo;s methods and properties determine the valid semantics, rather than its inheritance from a particular class or implementation of a specific interface.</p></blockquote></p>
 
 <!-- more -->
 
@@ -410,29 +646,49 @@ Duck Typing is a style of dynamic typing in which an object&rsquo;s methods and 
 <p>This sounds a bit weird for me, lets make an example.
 For instance you have a class that responsible for generating some View-presenter data according to objects that you pass</p>
 
-<p>{% codeblock lang:ruby %}
-  class Presenter</p>
-
-<pre><code>def description(subject)
-  case subject
-  when Post
-    subject.as_json.merge!(commets_counter: true)
-  when WallPost
-    subject.to_hash.merge!(commets_counter: true)
-  when Video
-    subject.attributes.merge!(title: 'some title')
-  when Audio
-    subject.to_json
-  when NilClass
-    nil
-  else
-    raise ArgumentError
-  end
-end
-</code></pre>
-
-<p>  end
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="k">class</span> <span class="nc">Presenter</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;def description(subject)</span>
+</span><span class='line'><span class="sr">  case subject</span>
+</span><span class='line'><span class="sr">  when Post</span>
+</span><span class='line'><span class="sr">    subject.as_json.merge!(commets_counter: true)</span>
+</span><span class='line'><span class="sr">  when WallPost</span>
+</span><span class='line'><span class="sr">    subject.to_hash.merge!(commets_counter: true)</span>
+</span><span class='line'><span class="sr">  when Video</span>
+</span><span class='line'><span class="sr">    subject.attributes.merge!(title: &#39;some title&#39;)</span>
+</span><span class='line'><span class="sr">  when Audio</span>
+</span><span class='line'><span class="sr">    subject.to_json</span>
+</span><span class='line'><span class="sr">  when NilClass</span>
+</span><span class='line'><span class="sr">    nil</span>
+</span><span class='line'><span class="sr">  else</span>
+</span><span class='line'><span class="sr">    raise ArgumentError</span>
+</span><span class='line'><span class="sr">  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h2>What&rsquo;s wrong?</h2>
 
@@ -446,54 +702,94 @@ This violates SOLID principles.</p>
 
 
 <p>Let&rsquo;s refactoring this:
-{% codeblock lang:ruby %}
-class Presenter
-  def description(subject)</p>
-
-<pre><code>case subject
-when Post
-  subject.description
-when WallPost
-  subject.description
-when Account
-  subject.description
-when Video
-  subject.description
-when Audio
-  subject.description
-when NilClass
-  nil
-else
-  raise ArgumentError
-end
-</code></pre>
-
-<p>  end
-end</p>
-
-<h1>For other classes this will be similar to</h1>
-
-<p>class Post
-  def self.description</p>
-
-<pre><code>as_json.merge!(commets_counter: true)
-</code></pre>
-
-<p>  end
-end
-{% endcodeblock %}
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Presenter</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;case subject</span>
+</span><span class='line'><span class="sr">when Post</span>
+</span><span class='line'><span class="sr">  subject.description</span>
+</span><span class='line'><span class="sr">when WallPost</span>
+</span><span class='line'><span class="sr">  subject.description</span>
+</span><span class='line'><span class="sr">when Account</span>
+</span><span class='line'><span class="sr">  subject.description</span>
+</span><span class='line'><span class="sr">when Video</span>
+</span><span class='line'><span class="sr">  subject.description</span>
+</span><span class='line'><span class="sr">when Audio</span>
+</span><span class='line'><span class="sr">  subject.description</span>
+</span><span class='line'><span class="sr">when NilClass</span>
+</span><span class='line'><span class="sr">  nil</span>
+</span><span class='line'><span class="sr">else</span>
+</span><span class='line'><span class="sr">  raise ArgumentError</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="no">For</span> <span class="n">other</span> <span class="n">classes</span> <span class="n">this</span> <span class="n">will</span> <span class="n">be</span> <span class="n">similar</span> <span class="n">to</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Post</span>
+</span><span class='line'><span class="sr">  def self.description&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">as_json</span><span class="o">.</span><span class="n">merge!</span><span class="p">(</span><span class="n">commets_counter</span><span class="p">:</span> <span class="kp">true</span><span class="p">)</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 If subject will not implement description than rails will raise an exception.
 Next iteration of refactoring
-{% codeblock lang:ruby %}
-class Presenter
-  def description(subject)</p>
-
-<pre><code>subject.description
-</code></pre>
-
-<p>  end
-end
-{% endcodeblock %}
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Presenter</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">description</span><span class="p">(</span><span class="n">subject</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;subject.description</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 Congratulation you successfully implement Duck type :)
 But now our presenter looks like <a href="http://sourcemaking.com/refactoring/lazy-class">lazy class</a>.
 So this class could be totally removed.</p>
@@ -515,9 +811,7 @@ Also it will be good to test such Ducks using rspec <a href="https://www.relisha
 <p>Monads came form functional programming like Haskell. And this is not a secret from no-one that Ruby takes some parts from this languages.
 So, what is Monad about?</p>
 
-<p>{% blockquote %}
-Monad is a structure that represents computations. This allows the programmer to build pipelines that process data in steps, in which each action is decorated with additional processing rules provided by the monad. Today we will create monad and see how it will help us.
-{% endblockquote %}</p>
+<p><blockquote><p>Monad is a structure that represents computations. This allows the programmer to build pipelines that process data in steps, in which each action is decorated with additional processing rules provided by the monad. Today we will create monad and see how it will help us.</p></blockquote></p>
 
 <!-- more -->
 
@@ -532,41 +826,68 @@ Monad is a structure that represents computations. This allows the programmer to
 
 
 <p>Let&rsquo;s create it step by step
-{% codeblock lang:ruby%}
-class Monad
-  def initialize(value)</p>
-
-<pre><code>@v = value
-</code></pre>
-
-<p>  end</p>
-
-<p>  def unit(value)</p>
-
-<pre><code>self.class.new(value)
-</code></pre>
-
-<p>  end</p>
-
-<p>  def bind(f)</p>
-
-<pre><code>self.unit(f.call(@v))
-</code></pre>
-
-<p>  end
-end
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Monad</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;@v = value</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nf">unit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;self.class.new(value)</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;self.unit(f.call(@v))</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>It will produce
-{% codeblock lang:ruby%}
-  h = { a: { c: { d: { e: 4 } } } }
-  Monad.new(h).bind(lambda{|c| c.fetch(:a)}).bind(lambda{|c| c.fetch(:c)})
-  #=> {:d=>{:e=>4}}</p>
-
-<p>  v = 10
-  Monad.new(v).bind(lambda{|c| c**2 }).bind(lambda{|c| c / 2 })
-  #=> 50
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">h</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">a</span><span class="p">:</span> <span class="p">{</span> <span class="ss">c</span><span class="p">:</span> <span class="p">{</span> <span class="ss">d</span><span class="p">:</span> <span class="p">{</span> <span class="ss">e</span><span class="p">:</span> <span class="mi">4</span> <span class="p">}</span> <span class="p">}</span> <span class="p">}</span> <span class="p">}</span>
+</span><span class='line'>  <span class="no">Monad</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">lambda</span><span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:a</span><span class="p">)})</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">lambda</span><span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:c</span><span class="p">)})</span>
+</span><span class='line'>  <span class="c1">#=&gt; {:d=&gt;{:e=&gt;4}}&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="n">v</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span class='line'>  <span class="no">Monad</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">lambda</span><span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">**</span><span class="mi">2</span> <span class="p">})</span><span class="o">.</span><span class="n">bind</span><span class="p">(</span><span class="nb">lambda</span><span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span> <span class="o">/</span> <span class="mi">2</span> <span class="p">})</span>
+</span><span class='line'>  <span class="c1">#=&gt; 50</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>This is the basic realization of IO Monads.</p>
 
@@ -582,67 +903,117 @@ And others.</li>
 
 <h3>Simple implementation of Maybe monad</h3>
 
-<p>{% codeblock lang:ruby%}
-class Monad
-  def initialize(value)</p>
-
-<pre><code>@v = value
-</code></pre>
-
-<p>  end</p>
-
-<p>  def unit(value)</p>
-
-<pre><code>self.class.new(value)
-</code></pre>
-
-<p>  end</p>
-
-<p>  def bind(f)</p>
-
-<pre><code>begin
-  self.unit(f.call(@v))
-rescue
-  self.unit(nil)
-end
-</code></pre>
-
-<p>  end
-end
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Monad</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;@v = value</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nf">unit</span><span class="p">(</span><span class="n">value</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;self.class.new(value)</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">def</span> <span class="nf">bind</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;begin</span>
+</span><span class='line'><span class="sr">  self.unit(f.call(@v))</span>
+</span><span class='line'><span class="sr">rescue</span>
+</span><span class='line'><span class="sr">  self.unit(nil)</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>It will produce
-{% codeblock lang:ruby%}
-h1 = { a: { c: { d: { e: 4 } } } }
-h2 = {}
-f1 = lambda {|c| c.fetch(:a) }
-f2 = lambda {|c| c.fetch(:c) }
-f3 = lambda {|c| c.fetch(:d) }
-f4 = lambda {|c| c.fetch(:e) }</p>
-
-<p>Monad.new(h1).bind(f1).bind(f2).bind(f3).bind(f4)</p>
-
-<h1>=> 4</h1>
-
-<p>Monad.new(h2).bind(f1).bind(f2).bind(f3).bind(f4)</p>
-
-<h1>=> nil</h1>
-
-<p>{% endcodeblock %}
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">h1</span> <span class="o">=</span> <span class="p">{</span> <span class="ss">a</span><span class="p">:</span> <span class="p">{</span> <span class="ss">c</span><span class="p">:</span> <span class="p">{</span> <span class="ss">d</span><span class="p">:</span> <span class="p">{</span> <span class="ss">e</span><span class="p">:</span> <span class="mi">4</span> <span class="p">}</span> <span class="p">}</span> <span class="p">}</span> <span class="p">}</span>
+</span><span class='line'><span class="n">h2</span> <span class="o">=</span> <span class="p">{}</span>
+</span><span class='line'><span class="n">f1</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:a</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'><span class="n">f2</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:c</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'><span class="n">f3</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:d</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'><span class="n">f4</span> <span class="o">=</span> <span class="nb">lambda</span> <span class="p">{</span><span class="o">|</span><span class="n">c</span><span class="o">|</span> <span class="n">c</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="ss">:e</span><span class="p">)</span> <span class="p">}</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;Monad.new(h1).bind(f1).bind(f2).bind(f3).bind(f4)&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;=&gt;</span> <span class="mi">4</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;Monad.new(h2).bind(f1).bind(f2).bind(f3).bind(f4)&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;=&gt;</span> <span class="kp">nil</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 This way you could avoid exception handling in you applications that depend on external request
 For example
-{% codeblock lang:ruby%}
-class TwitterCallbackController &lt; ActionController::Base
-  def create</p>
-
-<pre><code>if partner_uuid = Monad.new(request).fetch(:body).fetch(:partner_uuid)
-  User.authenticate_by_uuid(partner_uuid)
-end
-</code></pre>
-
-<p>  end
-end
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">TwitterCallbackController</span> <span class="o">&amp;</span><span class="n">lt</span><span class="p">;</span> <span class="ss">ActionController</span><span class="p">:</span><span class="ss">:Base</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">create</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;if partner_uuid = Monad.new(request).fetch(:body).fetch(:partner_uuid)</span>
+</span><span class='line'><span class="sr">  User.authenticate_by_uuid(partner_uuid)</span>
+</span><span class='line'><span class="sr">end</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>Other fields of interest:</h3>
 
@@ -665,13 +1036,7 @@ end
     <link href="http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps/"/>
     <updated>2013-04-20T11:33:00+03:00</updated>
     <id>http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps</id>
-    <content type="html"><![CDATA[<p>{% blockquote Sincerely Your Wiki <a href="http://en.wikipedia.org/wiki/Single_Table_Inheritance">http://en.wikipedia.org/wiki/Single_Table_Inheritance</a> %}</p>
-
-<p>Single table inheritance is a way to emulate object-oriented inheritance in a
-relational database. When mapping from a database table to an object in an
-object-oriented language, a field in the database identifies what class in the hierarchy the object belongs to</p>
-
-<p>{% endblockquote %}</p>
+    <content type="html"><![CDATA[<p><blockquote><p></p></p><p><p>Single table inheritance is a way to emulate object-oriented inheritance in a<br/>relational database. When mapping from a database table to an object in an<br/>object-oriented language, a field in the database identifies what class in the hierarchy the object belongs to</p></p><p><p></p><footer><strong>Sincerely Your Wiki <a href="http://en.wikipedia.org/wiki/Single_Table_Inheritance">http://en.wikipedia.org/wiki/Single_Table_Inheritance</a></strong></footer></blockquote></p>
 
 <p>Single Table Inheritance(STI) is a useful and sharp technique,
 and like any other high level instrument you should use it in an appropriate place.
@@ -691,56 +1056,91 @@ Let&rsquo;s take a closer look with examples</p>
 
 <p>First thing that you should create is a table from which you will inherit:</p>
 
-<p>{% codeblock lang:ruby%}</p>
-
-<h1>app/models/asset.rb</h1>
-
-<p>class Asset &lt; ActiveRecord::Base
-  # Fields:</p>
-
-<pre><code>#   String attachment
-#   String type
-</code></pre>
-
-<p>end</p>
-
-<h1>app/models/image.rb</h1>
-
-<p>class Image &lt; Asset
-  mount_uploader :attachment, ImageUploader
-end</p>
-
-<h1>app/models/avatar.rb</h1>
-
-<p>class Avatar &lt; Asset
-  mount_uploader :attachment, AvatarUploader
-end</p>
-
-<h1>app/models/comment_attachment.rb</h1>
-
-<p>class CommentAttachment &lt; Asset
-  mount_uploader :attachment, CommentAttachmentUploader
-end
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1&gt;app/mo</span><span class="n">dels</span><span class="o">/</span><span class="n">asset</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Asset &amp;lt; ActiveRecord::Base</span>
+</span><span class='line'><span class="sr">  # Fields:&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="c1">#   String attachment</span>
+</span><span class='line'><span class="c1">#   String type</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1&gt;app/mo</span><span class="n">dels</span><span class="o">/</span><span class="n">image</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Image &amp;lt; Asset</span>
+</span><span class='line'><span class="sr">  mount_uploader :attachment, ImageUploader</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">app</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">avatar</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Avatar &amp;lt; Asset</span>
+</span><span class='line'><span class="sr">  mount_uploader :attachment, AvatarUploader</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">app</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">comment_attachment</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class CommentAttachment &amp;lt; Asset</span>
+</span><span class='line'><span class="sr">  mount_uploader :attachment, CommentAttachmentUploader</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>Let&rsquo;s see what will happens in terminal:</h3>
 
-<p>{% codeblock lang:ruby%}
-  1.9.3-p194 :001 > asset = Asset.create
-  => #<Asset id: 1, type: nil, attachment: nil></p>
-
-<p>  1.9.3-p194 :004 > comment_attachment = CommentAttachment.create
-  => #<CommentAttachment id: 4, type: "CommentAttachment", attachment: nil></p>
-
-<p>  1.9.3-p194 :006 > Asset.select(&lsquo;id, type&rsquo;)
-  => [#<Asset id: 1, type: nil>, #<Image id: 2, type: "Image">, #<Avatar id: 3, type: "Avatar">, #<CommentAttachment id: 4, type: "CommentAttachment">]
-{% endcodeblock %}</p>
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">001</span> <span class="o">&gt;</span> <span class="n">asset</span> <span class="o">=</span> <span class="no">Asset</span><span class="o">.</span><span class="n">create</span>
+</span><span class='line'>  <span class="o">=&gt;</span> <span class="c1">#&lt;Asset id: 1, type: nil, attachment: nil&gt;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">004</span> <span class="o">&gt;</span> <span class="n">comment_attachment</span> <span class="o">=</span> <span class="no">CommentAttachment</span><span class="o">.</span><span class="n">create</span>
+</span><span class='line'>  <span class="o">=&gt;</span> <span class="c1">#&lt;CommentAttachment id: 4, type: &quot;CommentAttachment&quot;, attachment: nil&gt;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">006</span> <span class="o">&gt;</span> <span class="no">Asset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="nb">id</span><span class="p">,</span> <span class="n">type</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;)</span>
+</span><span class='line'>  <span class="o">=&gt;</span> <span class="o">[</span><span class="c1">#&lt;Asset id: 1, type: nil&gt;, #&lt;Image id: 2, type: &quot;Image&quot;&gt;, #&lt;Avatar id: 3, type: &quot;Avatar&quot;&gt;, #&lt;CommentAttachment id: 4, type: &quot;CommentAttachment&quot;&gt;]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <h3>How does it work?</h3>
 
-<p>{% blockquote <a href="http://api.rubyonrails.org/classes/ActiveRecord/Base.html">http://api.rubyonrails.org/classes/ActiveRecord/Base.html</a> %}
-Active Record allows inheritance by storing the name of the class in a column that by default is named “type” (can be changed by overwriting Base.inheritance_column)
-{% endblockquote %}</p>
+<p><blockquote><p>Active Record allows inheritance by storing the name of the class in a column that by default is named “type” (can be changed by overwriting Base.inheritance_column)</p><footer><strong><a href="http://api.rubyonrails.org/classes/ActiveRecord/Base.html">http://api.rubyonrails.org/classes/ActiveRecord/Base.html</a></strong></footer></blockquote></p>
 
 <p>So when you inherit from some table your child tables will insert class name in <code>type</code> column.
 This looks good, you create one table, make an abstraction and right now everything work nice.
@@ -750,66 +1150,112 @@ You could go to your boss and say they your are awesome :)</p>
 <h2>Where is the evil?</h2>
 
 <p>What will happens when you will create a User?
-{% codeblock lang:ruby%}</p>
-
-<h1>app/models/user.rb</h1>
-
-<p>class User &lt; ActiveRecord::Base
-  has_one :avatar
-end</p>
-
-<h1>app/models/avatar.rb</h1>
-
-<p>class Avatar &lt; Asset
-  belongs_to :user
-end
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1&gt;app/mo</span><span class="n">dels</span><span class="o">/</span><span class="n">user</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class User &amp;lt; ActiveRecord::Base</span>
+</span><span class='line'><span class="sr">  has_one :avatar</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">app</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">avatar</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;class Avatar &amp;lt; Asset</span>
+</span><span class='line'><span class="sr">  belongs_to :user</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>You should add <code>user_id</code> to your asset table.
 Oh, yes you also need a <code>Post</code>, that will include <code>Images</code>, and yes you have a <code>Comments</code>, that attach to you <code>CommentAttachment</code>.
 And in the end you will face this kind of scheme:
-{% codeblock lang:ruby%}
-  create_table &ldquo;assets&rdquo;, :force => true do |t|</p>
-
-<pre><code>t.string   "type"
-t.string   "attachment"
-t.string   "user_id"
-t.string   "post_id"
-t.string   "comment_id"
-t.string   "commentator_id"
-t.datetime "created_at", :null =&gt; false
-t.datetime "updated_at", :null =&gt; false
-</code></pre>
-
-<p>  end
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">create_table</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">assets</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="ss">:force</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;t.string   &quot;type&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;attachment&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;user_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;post_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;comment_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;commentator_id&quot;</span>
+</span><span class='line'><span class="sr">t.datetime &quot;created_at&quot;, :null =&amp;gt; false</span>
+</span><span class='line'><span class="sr">t.datetime &quot;updated_at&quot;, :null =&amp;gt; false</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>Half of your table will be filled with <code>NULL</code>.
 Maybe someday you will decide to use your <code>CommentAttachment</code> for attaching <code>Audio</code> and <code>video</code>?
-{% codeblock lang:ruby%}
-  create_table &ldquo;assets&rdquo;, :force => true do |t|</p>
-
-<pre><code>t.string   "type"
-t.string   "attachment"
-t.string   "user_id"
-t.string   "post_id"
-t.string   "comment_id"
-t.string   "commentator_id"
-t.string   "audio_bitrate"
-t.string   "thumbnail"
-t.boolean  "is_in_gallery" #for cases when you create a gallery of images
-t.string   "artist"
-t.string   "album"
-t.integer  "year"
-t.string   "genre"
-t.integer  "bitrate"
-
-t.datetime "created_at", :null =&gt; false
-t.datetime "updated_at", :null =&gt; false
-</code></pre>
-
-<p>  end
-{% endcodeblock %}</p>
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">create_table</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">assets</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="ss">:force</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;t.string   &quot;type&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;attachment&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;user_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;post_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;comment_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;commentator_id&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;audio_bitrate&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;thumbnail&quot;</span>
+</span><span class='line'><span class="sr">t.boolean  &quot;is_in_gallery&quot; #for cases when you create a gallery of images</span>
+</span><span class='line'><span class="sr">t.string   &quot;artist&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;album&quot;</span>
+</span><span class='line'><span class="sr">t.integer  &quot;year&quot;</span>
+</span><span class='line'><span class="sr">t.string   &quot;genre&quot;</span>
+</span><span class='line'><span class="sr">t.integer  &quot;bitrate&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">t.datetime &quot;created_at&quot;, :null =&amp;gt; false</span>
+</span><span class='line'><span class="sr">t.datetime &quot;updated_at&quot;, :null =&amp;gt; false</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>Right now your table will looks like a crap. And your project will became soo huge that you could not to refactoring well.</p>
 
