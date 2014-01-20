@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Rails | Root of Evil]]></title>
   <link href="http://sharkzp.github.io/blog/categories/rails/atom.xml" rel="self"/>
   <link href="http://sharkzp.github.io/"/>
-  <updated>2013-12-16T18:27:50+02:00</updated>
+  <updated>2014-01-21T00:54:05+02:00</updated>
   <id>http://sharkzp.github.io/</id>
   <author>
     <name><![CDATA[Alex Topalov]]></name>
@@ -12,6 +12,284 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Contract Tests]]></title>
+    <link href="http://sharkzp.github.io/blog/2014/01/20/contract-tests/"/>
+    <updated>2014-01-20T23:31:00+02:00</updated>
+    <id>http://sharkzp.github.io/blog/2014/01/20/contract-tests</id>
+    <content type="html"><![CDATA[<p><blockquote><p></p></p><p><p>Integration Tests are a Scam</p></p><p><p></p><footer><strong>Joe Rainsberger <a href="http://www.infoq.com/presentations/integration-tests-scam">http://www.infoq.com/presentations/integration-tests-scam</a></strong></footer></blockquote></p>
+
+<p>If you still not using it, read this article and we will go through the process.</p>
+
+<!-- more -->
+
+
+<h3>Intro</h3>
+
+<p>I gave a <a href="https://slid.es/sharkzp/contract-tests">talk</a> few weeks ago about this topic on a conference and understood that still a lot of people have not known about such kind of tests. So I will help you out to understand the problem and what we could do with that.</p>
+
+<h3>Understanding the problem</h3>
+
+<p>The larger application we have more time we need to run our test suite. I hope a lot of us wrote integration tests, where your test tool click around application and check business process and UI. But the larger application we have &ndash; more objects will be involved in this process,
+so when we go up to 10k LOC each and every integration test involves big amount of logic and spends a lot of time to pass through. Also when test is failing who could say which exactly piece of code is broken? But don&rsquo;t get me wrong I still think that we need to write integration tests, but I think it will be better to run them only on CI for master branch in a background.</p>
+
+<p>Lets look on a problem from different perspectives.</p>
+
+<h3>Purpose of Unit tests</h3>
+
+<p>When we write unit tests we always keep in mind object under test, this means:</p>
+
+<p><img class="center" src="/images/mock.png"></p>
+
+<p>These means that we mocking or stubbing all dependencies that we have in a code.
+If Unit tests intend to test only one object, and integration tests does not provide great feedback what could we do?</p>
+
+<h3>Test pyramid</h3>
+
+<p>I&rsquo;m not a good painter but I think its pretty easy to understand.</p>
+
+<p><img class="center" src="/images/test_pyramid.png"></p>
+
+<p>This pyramid was popularized by Martin Fowler. It shows how your test suite should looks like in terms of coverage. But here we are missing contract tests. So here is updated version.</p>
+
+<p><img class="center" src="/images/test_pyramid_with_contract.png"></p>
+
+<p>So contracts test is a layer between integration tests and unit.</p>
+
+<h3>What the hack?</h3>
+
+<p>Basically contract is a communication between two objects in application.</p>
+
+<p><img class="center" src="/images/contract.png"></p>
+
+<p>And testing this contract implies checking dependency between this objects.</p>
+
+<h3>Practice! Finally! :)</h3>
+
+<p>For example we have two objects:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Tracker</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">time_to_handle_route</span><span class="p">(</span><span class="n">car</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;&quot;</span><span class="si">#{</span><span class="p">(</span><span class="n">length</span><span class="o">.</span><span class="n">to_f</span> <span class="o">/</span> <span class="n">car</span><span class="o">.</span><span class="n">speed</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="sr"> hour&quot;</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">class</span> <span class="nc">Honda</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">speed</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;120</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>And we have tests for this objects
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1&gt;&amp;hellip;/s</span><span class="n">pec</span><span class="o">/</span><span class="n">tracker_spec</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;require &amp;lsquo;spec_helper&amp;rsquo;&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">describe</span> <span class="no">Tracker</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">describe</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="c1">#drive&amp;rsquo; do&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">let</span><span class="p">(</span><span class="ss">:tracker</span><span class="p">)</span> <span class="p">{</span> <span class="no">Tracker</span><span class="o">.</span><span class="n">new</span> <span class="p">}</span>
+</span><span class='line'><span class="n">let</span><span class="p">(</span><span class="ss">:car</span><span class="p">)</span>     <span class="p">{</span> <span class="n">double</span><span class="p">(</span><span class="ss">speed</span><span class="p">:</span> <span class="mi">60</span><span class="p">)</span> <span class="p">}</span>
+</span><span class='line'><span class="n">let</span><span class="p">(</span><span class="ss">:route</span><span class="p">)</span>   <span class="p">{</span> <span class="mi">120</span> <span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">it</span> <span class="s1">&#39;returns time that will be spend for driving 120 km&#39;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="n">tracker</span><span class="o">.</span><span class="n">time_to_handle_route</span><span class="p">(</span><span class="n">car</span><span class="p">,</span> <span class="n">route</span><span class="p">))</span><span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="s1">&#39;2.0 hour&#39;</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1&gt;&amp;hellip;/s</span><span class="n">pec</span><span class="o">/</span><span class="n">honda_spec</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;require &amp;lsquo;spec_helper&amp;rsquo;&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">describe</span> <span class="no">Honda</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">describe</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="c1">#speed&amp;rsquo; do&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">it</span> <span class="s1">&#39;returns speed for Honda&#39;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="no">Honda</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">speed</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">120</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>What will be if we do a refactoring for <code>Honda</code> class. Because we think that method <code>speed</code> not descriptive enough.</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">class</span> <span class="nc">Honda</span>
+</span><span class='line'>  <span class="k">def</span> <span class="nf">speed_per_hour</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;120</span>
+</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
+</span><span class='line'><span class="sr">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Also we change the test suite for this class
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">spec_helper</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;describe Honda do</span>
+</span><span class='line'><span class="sr">  describe &amp;lsquo;#speed_per_hour&amp;rsquo; do&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">it</span> <span class="s1">&#39;returns speed for Honda&#39;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">expect</span><span class="p">(</span><span class="no">Honda</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">speed_per_hour</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">eq</span><span class="p">(</span><span class="mi">120</span><span class="p">)</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>But take a look on our test for tracker class. Since we expecting method <code>speed</code>. Class Honda will be not applicable for Tracker. But our test suite will be still passing.
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="c1">#{(length.to_f / car.speed).round(2)} hour&amp;rdquo;&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;&amp;</span><span class="n">hellip</span><span class="p">;</span><span class="o">/</span><span class="n">spec</span><span class="o">/</span><span class="n">tracker_spec</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;let(:car)     { double(speed: 60) }</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Here is where contract test will be useful.
+<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="n">spec_helper</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;describe &amp;lsquo;Contract between Honda and Tracker&amp;rsquo; do</span>
+</span><span class='line'><span class="sr">  context &amp;lsquo;Tracker&amp;rsquo; do&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">it</span> <span class="s1">&#39;responds to #time_to_handle_route&#39;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="no">Tracker</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:time_to_handle_route</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;  context &amp;lsquo;Honda&amp;rsquo; do&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="n">it</span> <span class="s1">&#39;responds to speed&#39;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="no">Honda</span><span class="o">.</span><span class="n">new</span><span class="o">.</span><span class="n">respond_to?</span><span class="p">(</span><span class="ss">:speed</span><span class="p">)</span><span class="o">.</span><span class="n">should</span> <span class="n">be_true</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="k">end</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>In this way we will test communication between objects. We don&rsquo;t need to know how this methods will be implementing but we expecting that this method will have such methods in their public interface.</p>
+
+<h3>Summary</h3>
+
+<p>You can always write such simple and easy tests by your own, but if you want to go beyond of that I recommend you to read about <a href="https://github.com/psyho/bogus">bogus</a>. And watch this talks: J. B. (Joe) Rainsberger &ndash; Integration Tests Are a Scam, Ruby Conf 12 &ndash; Boundaries by Gary Bernhardt.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Callbacks Extraction]]></title>
@@ -1028,241 +1306,6 @@ For example
 <h2>Resume</h2>
 
 <p>Monad its a powerful technique that could be used in your application in various places. But it could encapsulate some intermediate results that you may want to see. For example error handling could be more useful when you will see real answer from 3rd party applications.</p>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Don't use STI in your Rails Apps]]></title>
-    <link href="http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps/"/>
-    <updated>2013-04-20T11:33:00+03:00</updated>
-    <id>http://sharkzp.github.io/blog/2013/04/20/dont-use-sti-in-your-rails-apps</id>
-    <content type="html"><![CDATA[<p><blockquote><p></p></p><p><p>Single table inheritance is a way to emulate object-oriented inheritance in a<br/>relational database. When mapping from a database table to an object in an<br/>object-oriented language, a field in the database identifies what class in the hierarchy the object belongs to</p></p><p><p></p><footer><strong>Sincerely Your Wiki <a href="http://en.wikipedia.org/wiki/Single_Table_Inheritance">http://en.wikipedia.org/wiki/Single_Table_Inheritance</a></strong></footer></blockquote></p>
-
-<p>Single Table Inheritance(STI) is a useful and sharp technique,
-and like any other high level instrument you should use it in an appropriate place.
-Let&rsquo;s take a closer look with examples</p>
-
-<!-- more -->
-
-
-<p>For example you have a Blog, inside this blog you will have for sure such objects:</p>
-
-<ul>
-<li>Image</li>
-<li>User Avatar</li>
-<li>Comments Attachments</li>
-</ul>
-
-
-<p>First thing that you should create is a table from which you will inherit:</p>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;app/mo</span><span class="n">dels</span><span class="o">/</span><span class="n">asset</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;class Asset &amp;lt; ActiveRecord::Base</span>
-</span><span class='line'><span class="sr">  # Fields:&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">pre</span><span class="o">&gt;&lt;</span><span class="n">code</span><span class="o">&gt;</span><span class="c1">#   String attachment</span>
-</span><span class='line'><span class="c1">#   String type</span>
-</span><span class='line'><span class="o">&lt;</span><span class="sr">/code&gt;&lt;/</span><span class="n">pre</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;app/mo</span><span class="n">dels</span><span class="o">/</span><span class="n">image</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;class Image &amp;lt; Asset</span>
-</span><span class='line'><span class="sr">  mount_uploader :attachment, ImageUploader</span>
-</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">app</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">avatar</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;class Avatar &amp;lt; Asset</span>
-</span><span class='line'><span class="sr">  mount_uploader :attachment, AvatarUploader</span>
-</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">app</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">comment_attachment</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;class CommentAttachment &amp;lt; Asset</span>
-</span><span class='line'><span class="sr">  mount_uploader :attachment, CommentAttachmentUploader</span>
-</span><span class='line'><span class="sr">end</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<h3>Let&rsquo;s see what will happens in terminal:</h3>
-
-<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">001</span> <span class="o">&gt;</span> <span class="n">asset</span> <span class="o">=</span> <span class="no">Asset</span><span class="o">.</span><span class="n">create</span>
-</span><span class='line'>  <span class="o">=&gt;</span> <span class="c1">#&lt;Asset id: 1, type: nil, attachment: nil&gt;&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">004</span> <span class="o">&gt;</span> <span class="n">comment_attachment</span> <span class="o">=</span> <span class="no">CommentAttachment</span><span class="o">.</span><span class="n">create</span>
-</span><span class='line'>  <span class="o">=&gt;</span> <span class="c1">#&lt;CommentAttachment id: 4, type: &quot;CommentAttachment&quot;, attachment: nil&gt;&lt;/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span>  <span class="mi">1</span><span class="o">.</span><span class="mi">9</span><span class="o">.</span><span class="mi">3</span><span class="o">-</span><span class="n">p194</span> <span class="p">:</span><span class="mo">006</span> <span class="o">&gt;</span> <span class="no">Asset</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lsquo</span><span class="p">;</span><span class="nb">id</span><span class="p">,</span> <span class="n">type</span><span class="o">&amp;</span><span class="n">rsquo</span><span class="p">;)</span>
-</span><span class='line'>  <span class="o">=&gt;</span> <span class="o">[</span><span class="c1">#&lt;Asset id: 1, type: nil&gt;, #&lt;Image id: 2, type: &quot;Image&quot;&gt;, #&lt;Avatar id: 3, type: &quot;Avatar&quot;&gt;, #&lt;CommentAttachment id: 4, type: &quot;CommentAttachment&quot;&gt;]</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<h3>How does it work?</h3>
-
-<p><blockquote><p>Active Record allows inheritance by storing the name of the class in a column that by default is named “type” (can be changed by overwriting Base.inheritance_column)</p><footer><strong><a href="http://api.rubyonrails.org/classes/ActiveRecord/Base.html">http://api.rubyonrails.org/classes/ActiveRecord/Base.html</a></strong></footer></blockquote></p>
-
-<p>So when you inherit from some table your child tables will insert class name in <code>type</code> column.
-This looks good, you create one table, make an abstraction and right now everything work nice.
-When you will specify each uploader you could create different behavior and image size(I will not cover it in this post feel free to visit <a href="https://github.com/jnicklas/carrierwave">This link</a>)
-You could go to your boss and say they your are awesome :)</p>
-
-<h2>Where is the evil?</h2>
-
-<p>What will happens when you will create a User?
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="o">&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1&gt;app/mo</span><span class="n">dels</span><span class="o">/</span><span class="n">user</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;class User &amp;lt; ActiveRecord::Base</span>
-</span><span class='line'><span class="sr">  has_one :avatar</span>
-</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="n">app</span><span class="o">/</span><span class="n">models</span><span class="o">/</span><span class="n">avatar</span><span class="o">.</span><span class="n">rb</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;class Avatar &amp;lt; Asset</span>
-</span><span class='line'><span class="sr">  belongs_to :user</span>
-</span><span class='line'><span class="sr">end</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>You should add <code>user_id</code> to your asset table.
-Oh, yes you also need a <code>Post</code>, that will include <code>Images</code>, and yes you have a <code>Comments</code>, that attach to you <code>CommentAttachment</code>.
-And in the end you will face this kind of scheme:
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">create_table</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">assets</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="ss">:force</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;t.string   &quot;type&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;attachment&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;user_id&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;post_id&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;comment_id&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;commentator_id&quot;</span>
-</span><span class='line'><span class="sr">t.datetime &quot;created_at&quot;, :null =&amp;gt; false</span>
-</span><span class='line'><span class="sr">t.datetime &quot;updated_at&quot;, :null =&amp;gt; false</span>
-</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>Half of your table will be filled with <code>NULL</code>.
-Maybe someday you will decide to use your <code>CommentAttachment</code> for attaching <code>Audio</code> and <code>video</code>?
-<div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'>  <span class="n">create_table</span> <span class="o">&amp;</span><span class="n">ldquo</span><span class="p">;</span><span class="n">assets</span><span class="o">&amp;</span><span class="n">rdquo</span><span class="p">;,</span> <span class="ss">:force</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="k">do</span> <span class="o">|</span><span class="n">t</span><span class="o">|&lt;</span><span class="sr">/p&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;pre&gt;&lt;code&gt;t.string   &quot;type&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;attachment&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;user_id&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;post_id&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;comment_id&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;commentator_id&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;audio_bitrate&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;thumbnail&quot;</span>
-</span><span class='line'><span class="sr">t.boolean  &quot;is_in_gallery&quot; #for cases when you create a gallery of images</span>
-</span><span class='line'><span class="sr">t.string   &quot;artist&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;album&quot;</span>
-</span><span class='line'><span class="sr">t.integer  &quot;year&quot;</span>
-</span><span class='line'><span class="sr">t.string   &quot;genre&quot;</span>
-</span><span class='line'><span class="sr">t.integer  &quot;bitrate&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">t.datetime &quot;created_at&quot;, :null =&amp;gt; false</span>
-</span><span class='line'><span class="sr">t.datetime &quot;updated_at&quot;, :null =&amp;gt; false</span>
-</span><span class='line'><span class="sr">&lt;/</span><span class="n">code</span><span class="o">&gt;&lt;</span><span class="sr">/pre&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;  end</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div></p>
-
-<p>Right now your table will looks like a crap. And your project will became soo huge that you could not to refactoring well.</p>
-
-<h2>Conclusion</h2>
-
-<p>Use STI only when you totally sure that you will never change it.
-This post based on a true story.</p>
 ]]></content>
   </entry>
   
